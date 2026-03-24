@@ -3,53 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>복습 집 짓기 게임 with Bohyeon Teacher</title>
+    <title>Go-Teacher's Village Builder</title>
     <style>
         :root { --main-bg: #f1f8e9; --accent: #2e7d32; --danger: #d32f2f; }
         body { margin: 0; background: var(--main-bg); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; height: 100vh; overflow: hidden; }
         
-        /* 인트로 카드 */
+        /* 인트로 화면 */
         #intro-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; box-sizing: border-box; }
-        .info-card { background: #f9f9f9; padding: 18px; border-radius: 20px; border: 2px solid #e0e0e0; margin-bottom: 12px; width: 100%; max-width: 420px; text-align: left; box-sizing: border-box; }
+        #intro-overlay h1 { color: var(--accent); font-size: 1.8rem; margin-bottom: 15px; }
+        .info-card { background: #f9f9f9; padding: 15px; border-radius: 20px; border: 2px solid #e0e0e0; margin-bottom: 10px; width: 100%; max-width: 420px; text-align: left; box-sizing: border-box; }
+        .info-card h3 { margin-top: 0; color: #388e3c; border-bottom: 2px solid #a5d6a7; padding-bottom: 5px; font-size: 1.1rem; }
         
-        /* 헤더 및 에너지 */
-        #header { width: 100%; max-width: 500px; padding: 15px; background: white; border-bottom: 5px solid #a5d6a7; display: flex; justify-content: space-around; font-weight: bold; font-size: 1.1rem; color: var(--accent); }
-        .energy-loss { color: var(--danger); animation: shake 0.5s; }
-        @keyframes shake { 0% {transform: translateX(0)} 25% {transform: translateX(5px)} 50% {transform: translateX(-5px)} 100% {transform: translateX(0)} }
+        /* 헤더 (에너지 삭제, 집 개수만 표시) */
+        #header { width: 100%; max-width: 500px; padding: 20px; background: white; border-bottom: 5px solid #a5d6a7; display: flex; justify-content: center; font-weight: bold; font-size: 1.3rem; color: var(--accent); box-sizing: border-box; }
 
-        /* 가든(정원) */
-        #garden { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 90%; max-width: 400px; margin: 20px 0; background: #c8e6c9; padding: 15px; border-radius: 25px; }
-        .slot { aspect-ratio: 1; background: #a5d6a7; border-radius: 15px; border: 2px dashed rgba(255,255,255,0.4); display: flex; justify-content: center; align-items: center; font-size: 2.2rem; cursor: pointer; transition: 0.2s; }
+        /* 정원 */
+        #garden { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 90%; max-width: 400px; margin: 30px 0; background: #c8e6c9; padding: 15px; border-radius: 25px; box-shadow: inset 0 5px 15px rgba(0,0,0,0.1); }
+        .slot { aspect-ratio: 1; background: #a5d6a7; border-radius: 15px; border: 2px dashed rgba(255,255,255,0.4); display: flex; justify-content: center; align-items: center; font-size: 2.2rem; cursor: pointer; transition: 0.2s; position: relative; }
         .slot.has-item { background: white; border-style: solid; border-color: #81c784; box-shadow: 0 4px 0 #81c784; }
-        .slot.selected { border: 4px solid #fbc02d; background: #fff9c4; transform: scale(1.05); }
-
-        /* 버튼 */
+        .slot.selected { border: 4px solid #fbc02d; background: #fff9c4; transform: scale(1.05); z-index: 10; }
+        
         .main-btn { padding: 18px 45px; background: var(--accent); color: white; border-radius: 50px; border: none; font-size: 1.3rem; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #1b5e20; }
-        .main-btn:disabled { background: #ccc; box-shadow: 0 5px 0 #999; cursor: not-allowed; }
 
-        /* 퀴즈 팝업 */
+        /* 퀴즈 및 잠금 오버레이 */
         #quiz-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 100; }
         #quiz-card { background: white; width: 85%; max-width: 380px; padding: 30px; border-radius: 30px; text-align: center; border: 6px solid var(--accent); }
         .ans-btn { display: block; width: 100%; padding: 15px; margin: 12px 0; border: 2px solid #eee; border-radius: 15px; background: #fdfdfd; font-size: 1.1rem; cursor: pointer; font-weight: bold; }
-        
-        /* 터치 잠금 오버레이 */
-        #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(211, 47, 47, 0.4); display: none; z-index: 300; flex-direction: column; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 2rem; }
+        #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(211, 47, 47, 0.7); display: none; z-index: 300; flex-direction: column; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 2rem; text-align: center; }
     </style>
 </head>
 <body>
 
 <div id="intro-overlay">
-    <h1 style="color:var(--accent)">🏡 Building a House</h1>
-    <div class="info-card"><h3>🎯 Goal</h3><p>Review lessons and build 3 houses!</p></div>
-    <div class="info-card"><h3>🎮 Penalty</h3><p>❌ Wrong answer = Energy <b>-1</b><br>❌ 2 Misses = <b>5 sec Lock!</b></p></div>
+    <h1>🏡 Building a House with BOHYEON Teacher!</h1>
+    
+    <div class="info-card">
+        <h3>🎯 Learning Goals</h3>
+        <p>Review the key expressions and grammar we learned in this unit by solving quizzes!</p>
+    </div>
+
+    <div class="info-card">
+        <h3>🎮 How to Play</h3>
+        <p>1. Solve the <b>Quiz</b> to get items.<br>
+           2. Merge <b>SAME</b> items to build a house.<br>
+           (🌱 → 🌿 → 🌷 → 🌳 → <b>House🏡</b>)</p>
+    </div>
+
+    <div class="info-card" style="border-color: #fbc02d; background: #fffde7;">
+        <h3>⚠️ Caution!</h3>
+        <p>❌ 2 Misses = <b>5 seconds Lock!</b><br>
+           🏆 The first 5 students to build 3 houses win!</p>
+    </div>
+
     <button class="main-btn" onclick="startGame()">START GAME</button>
 </div>
 
 <div id="lock-overlay">🚫 Focus Time!<br><span id="lock-timer">5</span>s</div>
 
 <div id="header">
-    <span id="energy-display">💧 Energy: <span id="water">0</span></span>
-    <span>🏡 Houses: <span id="house-count">0</span>/3</span>
+    <span>🏡 My Houses: <span id="house-count">0</span> / 3</span>
 </div>
 
 <div id="garden">
@@ -57,7 +69,7 @@
 </div>
 
 <div style="text-align: center;">
-    <button id="quiz-trigger" class="main-btn" onclick="openQuiz()">GET ITEM (Quiz)</button>
+    <button class="main-btn" onclick="openQuiz()">GET ITEM (Quiz)</button>
 </div>
 
 <div id="quiz-overlay">
@@ -105,14 +117,14 @@ const quizData = [
     {q: "빈칸: 'They ___ not like horror.'", a: "do", c: ["do", "does", "are"]}
 ];
 
-let water = 0, houses = 0, selectedIdx = -1, wrongCount = 0;
+let houses = 0, selectedIdx = -1, wrongCount = 0;
 let garden = Array(16).fill(0);
 const icons = ["", "🌱", "🌿", "🌷", "🌳", "🏡"];
 
 function startGame() { document.getElementById('intro-overlay').style.display = 'none'; }
 
 function openQuiz() {
-    wrongCount = 0; // 새 문제 시작 시 오답 횟수 초기화
+    wrongCount = 0;
     const q = quizData[Math.floor(Math.random() * quizData.length)];
     document.getElementById('q-text').textContent = q.q;
     const optBox = document.getElementById('options');
@@ -123,14 +135,10 @@ function openQuiz() {
         btn.textContent = choice;
         btn.onclick = () => {
             if(choice === q.a) {
-                water++;
                 spawnItem(1);
-                updateUI();
                 document.getElementById('quiz-overlay').style.display = 'none';
             } else {
                 wrongCount++;
-                if(water > 0) water--; // 패널티: 에너지 감소
-                updateUI(true);
                 if(wrongCount >= 2) { 
                     startPenalty(); 
                 } else {
@@ -175,21 +183,13 @@ function handleSlotClick(idx) {
     else {
         if (garden[selectedIdx] === garden[idx]) {
             garden[idx] += 1; garden[selectedIdx] = 0;
-            if (garden[idx] === 5) { houses++; updateUI(); }
+            if (garden[idx] === 5) { 
+                houses++; 
+                document.getElementById('house-count').textContent = houses;
+            }
             selectedIdx = -1; updateGarden();
-            setTimeout(() => { if(houses >= 3) alert("CONGRATULATIONS!"); }, 100);
+            setTimeout(() => { if(houses >= 3) alert("CONGRATULATIONS!\nYou built 3 houses! ✨🏡"); }, 100);
         } else { selectedIdx = idx; updateGarden(); document.getElementById(`slot-${idx}`).classList.add('selected'); }
-    }
-}
-
-function updateUI(isLoss = false) {
-    const wSpan = document.getElementById('water');
-    const wDisplay = document.getElementById('energy-display');
-    wSpan.textContent = water;
-    document.getElementById('house-count').textContent = houses;
-    if(isLoss) {
-        wDisplay.classList.add('energy-loss');
-        setTimeout(() => wDisplay.classList.remove('energy-loss'), 500);
     }
 }
 
@@ -198,6 +198,7 @@ function updateGarden() {
         const slot = document.getElementById(`slot-${i}`);
         slot.textContent = icons[v];
         slot.className = 'slot' + (v > 0 ? ' has-item' : '');
+        if(v === 5) slot.style.background = "#fff9c4";
     });
 }
 updateGarden();
