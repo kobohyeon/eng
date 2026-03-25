@@ -1,1 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Building a House with BOHYEON Teacher!</title>
+    <style>
+        :root { --main-bg: #f1f8e9; --accent: #2e7d32; --danger: #d32f2f; }
+        body { margin: 0; background: var(--main-bg); font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; height: 100vh; overflow: hidden; }
+        
+        #intro-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 40px 20px; text-align: center; box-sizing: border-box; overflow-y: auto; }
+        #intro-overlay h1 { color: var(--accent); font-size: 1.8rem; margin-bottom: 25px; }
+        .info-card { background: #f9f9f9; padding: 20px; border-radius: 20px; border: 1px solid #e0e0e0; margin-bottom: 15px; width: 100%; max-width: 450px; text-align: left; box-sizing: border-box; }
+        .info-card h3 { margin-top: 0; color: #388e3c; border-bottom: 2px solid #a5d6a7; padding-bottom: 8px; font-size: 1.1rem; }
+        .info-card ul, .info-card ol { padding-left: 20px; margin: 10px 0; }
+        .info-card li { margin-bottom: 8px; line-height: 1.5; font-size: 1rem; color: #333; }
+        .caution-card { border: 2px solid #fbc02d; background: #fffde7; }
+        
+        #header { width: 100%; max-width: 500px; padding: 20px; background: white; border-bottom: 5px solid #a5d6a7; display: flex; justify-content: center; font-weight: bold; font-size: 1.3rem; color: var(--accent); box-sizing: border-box; }
+        #garden { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 90%; max-width: 400px; margin: 20px 0; background: #c8e6c9; padding: 15px; border-radius: 25px; box-shadow: inset 0 5px 15px rgba(0,0,0,0.1); }
+        .slot { aspect-ratio: 1; background: #a5d6a7; border-radius: 15px; border: 2px dashed rgba(255,255,255,0.4); display: flex; justify-content: center; align-items: center; font-size: 2.2rem; cursor: pointer; transition: 0.2s; position: relative; }
+        .slot.has-item { background: white; border-style: solid; border-color: #81c784; box-shadow: 0 4px 0 #81c784; }
+        .slot.selected { border: 4px solid #fbc02d; background: #fff9c4; transform: scale(1.05); z-index: 10; }
+        
+        .main-btn { padding: 15px 60px; background: var(--accent); color: white; border-radius: 50px; border: none; font-size: 1.4rem; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #1b5e20; }
+        /* 비활성화 버튼 스타일 */
+        .main-btn:disabled { background: #999; box-shadow: 0 5px 0 #666; cursor: not-allowed; opacity: 0.7; }
 
+        #quiz-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 100; }
+        #quiz-card { background: white; width: 85%; max-width: 380px; padding: 30px; border-radius: 30px; text-align: center; border: 6px solid var(--accent); }
+        .ans-btn { display: block; width: 100%; padding: 15px; margin: 12px 0; border: 2px solid #eee; border-radius: 15px; background: #fdfdfd; font-size: 1.1rem; cursor: pointer; font-weight: bold; }
+        
+        #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(56, 142, 60, 0.95); display: none; z-index: 300; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; padding: 20px; }
+        #lock-msg { font-size: 1.2rem; margin-bottom: 10px; color: #c8e6c9; }
+        #lock-answer { font-size: 2.2rem; font-weight: 900; margin-bottom: 30px; color: #fff; border-bottom: 3px solid #fff; padding-bottom: 5px; }
+        #lock-timer-box { font-size: 1.4rem; background: rgba(255,255,255,0.2); padding: 10px 30px; border-radius: 50px; }
+    </style>
+</head>
+<body>
+
+<div id="intro-overlay">
+    <h1>🏡 Building a House with BOHYEON Teacher!</h1>
+    <div class="info-card">
+        <h3>🎯 Learning Goals (Lesson 1)</h3>
+        <ul>
+            <li><b>Vocabulary:</b> 24 words & English definitions</li>
+            <li><b>Be-verbs:</b> am, are, is & Negative forms</li>
+            <li><b>General Verbs:</b> 3rd person singular & Negatives</li>
+        </ul>
+    </div>
+    <div class="info-card">
+        <h3>🎮 How to Play</h3>
+        <ol>
+            <li>Solve the <b>Quiz</b> to get items. (🌱 90%, 🌿 10%)</li>
+            <li>Merge <b>SAME</b> items to build a house.</li>
+        </ol>
+    </div>
+    <div class="info-card caution-card">
+        <h3>⚠️ Caution!</h3>
+        <ul>
+            <li>❌ 2 Misses = <b>Checking the Answer! (5s)</b></li>
+            <li>🪴 If the garden is full, you can't take a quiz!</li>
+        </ul>
+    </div>
+    <button class="main-btn" onclick="startGame()">START GAME</button>
+</div>
+
+<div id="lock-overlay">
+    <div id="lock-msg">Remember this! The answer is:</div>
+    <div id="lock-answer">ANSWER</div>
+    <div id="lock-timer-box">Next question in <span id="lock-timer">5</span>s</div>
+</div>
+
+<div id="header">
+    <span>🏡 My Houses: <span id="house-count">0</span> / 3</span>
+</div>
+
+<div id="garden">
+    <script>for(let i=0; i<16; i++) document.write(`<div class="slot" id="slot-${i}" onclick="handleSlotClick(${i})"></div>`);</script>
+</div>
+
+<div style="text-align: center;">
+    <button id="quiz-btn" class="main-btn" onclick="openQuiz()">GET ITEM (Quiz)</button>
+</div>
+
+<div id="quiz-overlay">
+    <div id="quiz-card">
+        <h2 id="q-text">Question</h2>
+        <div id="options"></div>
+    </div>
+</div>
+
+<script>
+const allQuestions = [
+    {q: "'active'의 뜻은?", a: "활동적인", c: ["활동적인", "창의적인", "친절한"]},
+    {q: "'character'의 뜻은?", a: "등장인물", c: ["등장인물", "만화", "대화"]},
+    {q: "'patient'의 뜻은?", a: "참을성 있는", c: ["참을성 있는", "영리한", "완벽한"]},
+    {q: "Definition: 'a talk between people'", a: "conversation", c: ["conversation", "cartoon", "poster"]},
+    {q: "I ____ a student.", a: "am", c: ["am", "is", "are"]},
+    {q: "She ____ (study) English.", a: "studies", c: ["studies", "studys", "studyes"]}
+    // ... 추가 문제들 생략
+];
+
+let quizPool = [...allQuestions]; 
+let houses = 0, selectedIdx = -1, wrongCount = 0;
+let garden = Array(16).fill(0);
+const icons = ["", "🌱", "🌿", "🌷", "🌳", "🏡"];
+
+function startGame() { document.getElementById('intro-overlay').style.display = 'none'; }
+
+function openQuiz() {
+    // ⚠️ 정원 가득 참 체크
+    const emptySlots = garden.map((v, i) => v === 0 ? i : null).filter(v => v !== null);
+    if(emptySlots.length === 0) {
+        alert("The garden is full! Merge items first. 🪴");
+        return;
+    }
+
+    if(quizPool.length === 0) quizPool = [...allQuestions]; 
+    wrongCount = 0;
+    const randomIndex = Math.floor(Math.random() * quizPool.length);
+    const q = quizPool[randomIndex];
+    quizPool.splice(randomIndex, 1);
+
+    document.getElementById('q-text').textContent = q.q;
+    const optBox = document.getElementById('options');
+    optBox.innerHTML = '';
+    const choices = [...q.c].sort(() => Math.random() - 0.5);
+    
+    choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'ans-btn';
+        btn.textContent = choice;
+        btn.onclick = () => {
+            if(choice === q.a) {
+                const rand = Math.random();
+                spawnItem((rand < 0.9) ? 1 : 2);
+                document.getElementById('quiz-overlay').style.display = 'none';
+            } else {
+                wrongCount++;
+                if(wrongCount >= 2) startPenalty(q.a);
+                else alert("Wrong! One more chance.");
+            }
+        };
+        optBox.appendChild(btn);
+    });
+    document.getElementById('quiz-overlay').style.display = 'flex';
+}
+
+function startPenalty(correctAnswer) {
+    const lock = document.getElementById('lock-overlay');
+    const timerText = document.getElementById('lock-timer');
+    const answerDisplay = document.getElementById('lock-answer');
+    answerDisplay.textContent = correctAnswer;
+    lock.style.display = 'flex';
+    document.getElementById('quiz-overlay').style.display = 'none';
+    let count = 5;
+    const interval = setInterval(() => {
+        count--;
+        timerText.textContent = count;
+        if(count <= 0) {
+            clearInterval(interval);
+            lock.style.display = 'none';
+            timerText.textContent = "5";
+            wrongCount = 0;
+        }
+    }, 1000);
+}
+
+function spawnItem(lv) {
+    const emptySlots = garden.map((v, i) => v === 0 ? i : null).filter(v => v !== null);
+    if(emptySlots.length > 0) {
+        garden[emptySlots[Math.floor(Math.random() * emptySlots.length)]] = lv;
+    }
+    updateGarden();
+}
+
+function handleSlotClick(idx) {
+    if (garden[idx] === 0 || garden[idx] >= 5) { selectedIdx = -1; updateGarden(); return; }
+    if (selectedIdx === -1) {
+        selectedIdx = idx; updateGarden();
+        document.getElementById(`slot-${idx}`).classList.add('selected');
+    } else if (selectedIdx === idx) { selectedIdx = -1; updateGarden(); }
+    else {
+        if (garden[selectedIdx] === garden[idx]) {
+            garden[idx] += 1; garden[selectedIdx] = 0;
+            if (garden[idx] === 5) { houses++; document.getElementById('house-count').textContent = houses; }
+            selectedIdx = -1; updateGarden();
+            setTimeout(() => { if(houses >= 3) alert("🏆 MISSION COMPLETE!"); }, 100);
+        } else { selectedIdx = idx; updateGarden(); document.getElementById(`slot-${idx}`).classList.add('selected'); }
+    }
+}
+
+function updateGarden() {
+    let emptyCount = 0;
+    garden.forEach((v, i) => {
+        const slot = document.getElementById(`slot-${i}`);
+        slot.textContent = icons[v];
+        slot.className = 'slot' + (v > 0 ? ' has-item' : '');
+        if(v === 5) slot.style.background = "#fff9c4";
+        if(v === 0) emptyCount++;
+    });
+
+    // ⚠️ 정원이 꽉 차면 퀴즈 버튼 비활성화 시각화 (선택사항)
+    const quizBtn = document.getElementById('quiz-btn');
+    if(emptyCount === 0) {
+        quizBtn.style.opacity = "0.5";
+        quizBtn.innerText = "GARDEN FULL (Merge!)";
+    } else {
+        quizBtn.style.opacity = "1";
+        quizBtn.innerText = "GET ITEM (Quiz)";
+    }
+}
+updateGarden();
+</script>
+</body>
+</html>
