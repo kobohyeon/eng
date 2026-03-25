@@ -8,16 +8,17 @@
         :root { --main-bg: #f1f8e9; --accent: #2e7d32; --danger: #d32f2f; }
         body { margin: 0; background: var(--main-bg); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; height: 100vh; overflow: hidden; }
         
-        /* 인트로 화면 */
         #intro-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; box-sizing: border-box; }
         #intro-overlay h1 { color: var(--accent); font-size: 1.8rem; margin-bottom: 15px; }
         .info-card { background: #f9f9f9; padding: 15px; border-radius: 20px; border: 2px solid #e0e0e0; margin-bottom: 10px; width: 100%; max-width: 420px; text-align: left; box-sizing: border-box; }
         .info-card h3 { margin-top: 0; color: #388e3c; border-bottom: 2px solid #a5d6a7; padding-bottom: 5px; font-size: 1.1rem; }
         
-        /* 헤더 (에너지 삭제, 집 개수만 표시) */
+        .info-card ol { padding-left: 20px; margin: 10px 0; }
+        .info-card li { margin-bottom: 8px; line-height: 1.4; list-style-position: outside; }
+        .indent-text { display: block; margin-top: 2px; color: #666; font-size: 0.95rem; }
+
         #header { width: 100%; max-width: 500px; padding: 20px; background: white; border-bottom: 5px solid #a5d6a7; display: flex; justify-content: center; font-weight: bold; font-size: 1.3rem; color: var(--accent); box-sizing: border-box; }
 
-        /* 정원 */
         #garden { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 90%; max-width: 400px; margin: 30px 0; background: #c8e6c9; padding: 15px; border-radius: 25px; box-shadow: inset 0 5px 15px rgba(0,0,0,0.1); }
         .slot { aspect-ratio: 1; background: #a5d6a7; border-radius: 15px; border: 2px dashed rgba(255,255,255,0.4); display: flex; justify-content: center; align-items: center; font-size: 2.2rem; cursor: pointer; transition: 0.2s; position: relative; }
         .slot.has-item { background: white; border-style: solid; border-color: #81c784; box-shadow: 0 4px 0 #81c784; }
@@ -25,11 +26,11 @@
         
         .main-btn { padding: 18px 45px; background: var(--accent); color: white; border-radius: 50px; border: none; font-size: 1.3rem; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #1b5e20; }
 
-        /* 퀴즈 및 잠금 오버레이 */
         #quiz-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 100; }
         #quiz-card { background: white; width: 85%; max-width: 380px; padding: 30px; border-radius: 30px; text-align: center; border: 6px solid var(--accent); }
         .ans-btn { display: block; width: 100%; padding: 15px; margin: 12px 0; border: 2px solid #eee; border-radius: 15px; background: #fdfdfd; font-size: 1.1rem; cursor: pointer; font-weight: bold; }
-        #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(211, 47, 47, 0.7); display: none; z-index: 300; flex-direction: column; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 2rem; text-align: center; }
+        
+        #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(211, 47, 47, 0.9); display: none; z-index: 300; flex-direction: column; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 2rem; text-align: center; }
     </style>
 </head>
 <body>
@@ -38,21 +39,23 @@
     <h1>🏡 Building a House with BOHYEON Teacher!</h1>
     
     <div class="info-card">
-        <h3>🎯 Learning Goals</h3>
-        <p>Review the key expressions and grammar we learned in this unit by solving quizzes!</p>
+        <h3>🎯 Learning Goals (Lesson 1)</h3>
+        <p style="margin: 5px 0; font-weight: bold; color: #1b5e20;">Lesson 1 핵심 정리:</p>
+        <ul style="padding-left: 20px; margin: 5px 0;">
+            <li><b>Vocabulary:</b> 어휘 24종 및 영영풀이</li>
+            <li><b>Be-verbs:</b> am, are, is의 쓰임과 부정문</li>
+            <li><b>General Verbs:</b> 3인칭 단수 변화와 부정문</li>
+        </ul>
     </div>
 
     <div class="info-card">
         <h3>🎮 How to Play</h3>
-        <p>1. Solve the <b>Quiz</b> to get items.<br>
-           2. Merge <b>SAME</b> items to build a house.<br>
-           (🌱 → 🌿 → 🌷 → 🌳 → <b>House🏡</b>)</p>
-    </div>
-
-    <div class="info-card" style="border-color: #fbc02d; background: #fffde7;">
-        <h3>⚠️ Caution!</h3>
-        <p>❌ 2 Misses = <b>5 seconds Lock!</b><br>
-           🏆 The first 5 students to build 3 houses win!</p>
+        <ol>
+            <li>Solve the <b>Quiz</b> to get items.<br>
+                <span class="indent-text">(90% 🌱, 10% 🌿 <b>Lucky Get!</b>)</span></li>
+            <li>Merge <b>SAME</b> items to build a house.<br>
+                <span class="indent-text">(🌱 → 🌿 → 🌷 → 🌳 → 🏡)</span></li>
+        </ol>
     </div>
 
     <button class="main-btn" onclick="startGame()">START GAME</button>
@@ -74,49 +77,64 @@
 
 <div id="quiz-overlay">
     <div id="quiz-card">
-        <h2 id="q-text">Question</h2>
+        <p id="q-category" style="font-size: 0.8rem; color: #666; margin-bottom: 5px;"></p>
+        <h2 id="q-text" style="font-size: 1.2rem; line-height: 1.5;">Question</h2>
         <div id="options"></div>
     </div>
 </div>
 
 <script>
 const quizData = [
-    {q: "'active'의 뜻은?", a: "활동적인", c: ["활동적인", "조용한", "창의적인"]},
-    {q: "'cartoon'의 뜻은?", a: "만화", c: ["만화", "영화", "포스터"]},
-    {q: "'conversation'의 뜻은?", a: "대화", c: ["대화", "독백", "발표"]},
-    {q: "'cotton candy'의 뜻은?", a: "솜사탕", c: ["솜사탕", "사탕발림", "꿀벌"]},
-    {q: "'friendly'의 뜻은?", a: "친절한", c: ["친절한", "똑똑한", "흥미로운"]},
-    {q: "'honeybee'의 뜻은?", a: "꿀벌", c: ["꿀벌", "바다거북", "개미"]},
-    {q: "'liar'의 뜻은?", a: "거짓말쟁이", c: ["거짓말쟁이", "정직한 사람", "등장인물"]},
-    {q: "'perfect'의 뜻은?", a: "완벽한", c: ["완벽한", "부족한", "새로운"]},
-    {q: "'poster'의 뜻은?", a: "포스터", c: ["포스터", "교과서", "생각"]},
-    {q: "'smart'의 뜻은?", a: "똑똑한", c: ["똑똑한", "상냥한", "활동적인"]},
-    {q: "'thought'의 뜻은?", a: "생각", c: ["생각", "과목", "대화"]},
-    {q: "'turtle'의 뜻은?", a: "바다거북", c: ["바다거북", "꿀벌", "거짓말쟁이"]},
-    {q: "'a lot'의 뜻은?", a: "많이", c: ["많이", "조금", "자주"]},
-    {q: "'sweet'의 두 번째 뜻은?", a: "상냥한", c: ["상냥한", "활동적인", "딱딱한"]},
-    {q: "풀이: 'a talk between people'", a: "conversation", c: ["conversation", "thought", "subject"]},
-    {q: "풀이: 'without effort, pain, or trouble'", a: "easily", c: ["easily", "really", "perfect"]},
-    {q: "풀이: 'a bee that makes honey'", a: "honeybee", c: ["honeybee", "active", "turtle"]},
-    {q: "풀이: 'to get pleasure from something'", a: "enjoy", c: ["enjoy", "share", "active"]},
-    {q: "풀이: 'to use something with other people'", a: "share", c: ["share", "enjoy", "creative"]},
-    {q: "풀이: 'not having any mistakes or damage'", a: "perfect", c: ["perfect", "smart", "interesting"]},
-    {q: "주어 'I'와 함께 쓰는 be동사는?", a: "am", c: ["am", "are", "is"]},
-    {q: "주어 'You'와 함께 쓰는 be동사는?", a: "are", c: ["am", "are", "is"]},
-    {q: "주어 'He / She / It'과 함께 쓰는 것은?", a: "is", c: ["am", "are", "is"]},
-    {q: "주어 'We / They'와 함께 쓰는 것은?", a: "are", c: ["am", "are", "is"]},
-    {q: "'is not'의 줄임말은?", a: "isn't", c: ["isnt", "isn't", "is'not"]},
-    {q: "'am not'의 올바른 줄임말은?", a: "줄여 쓰지 않음", c: ["amn't", "am not't", "줄여 쓰지 않음"]},
-    {q: "'They are'의 줄임말은?", a: "they're", c: ["theyr'e", "they're", "their're"]},
-    {q: "3인칭 단수형: 'miss'는?", a: "misses", c: ["misses", "misss", "missies"]},
-    {q: "3인칭 단수형: 'fix'는?", a: "fixes", c: ["fixs", "fixies", "fixes"]},
-    {q: "3인칭 단수형: 'watch'는?", a: "watches", c: ["watchs", "watches", "watchies"]},
-    {q: "3인칭 단수형: 'cry'는?", a: "cries", c: ["cryes", "crys", "cries"]},
-    {q: "3인칭 단수형: 'try'는?", a: "tries", c: ["trys", "tries", "tryies"]},
-    {q: "빈칸: 'She ___ not enjoy it.'", a: "does", c: ["do", "does", "is"]},
-    {q: "빈칸: 'They ___ not like horror.'", a: "do", c: ["do", "does", "are"]}
+    // [Vocabulary - 어휘 및 영영풀이]
+    {cat: "Vocabulary", q: "영영풀이: 'a person who tells lies instead of the truth'", a: "liar", c: ["liar", "character", "patient"]},
+    {cat: "Vocabulary", q: "영영풀이: 'attracting your attention because it is special, exciting or unusual'", a: "interesting", c: ["interesting", "active", "perfect"]},
+    {cat: "Vocabulary", q: "영영풀이: 'able to stand trouble or pain without complaining'", a: "patient", c: ["patient", "creative", "smart"]},
+    {cat: "Vocabulary", q: "영영풀이: 'a large reptile with a hard round shell that lives in the sea'", a: "turtle", c: ["turtle", "honeybee", "character"]},
+    {cat: "Vocabulary", q: "빈칸: You should be ____ to others and help them.", a: "friendly", c: ["friendly", "horror", "liar"]},
+    {cat: "Vocabulary", q: "빈칸: Tom is very ____. He makes new things with his imagination.", a: "creative", c: ["creative", "easily", "active"]},
+    {cat: "Vocabulary", q: "빈칸: I ____ the summer vacation with my friends.", a: "enjoy", c: ["enjoy", "share", "thought"]},
+    {cat: "Vocabulary", q: "빈칸: This candy tastes very ____.", a: "sweet", c: ["sweet", "smart", "easily"]},
+    {cat: "Vocabulary", q: "빈칸: Let's live ____ harmony with nature.", a: "in", c: ["in", "at", "with"]},
+    {cat: "Vocabulary", q: "'active'의 뜻으로 올바른 것은?", a: "활동적인", c: ["활동적인", "똑똑한", "조용한"]},
+
+    // [Be-verbs - be동사]
+    {cat: "Be-verbs", q: "빈칸: We ____ (not) in the same class.", a: "are not", c: ["are not", "am not", "is not"]},
+    {cat: "Be-verbs", q: "빈칸: My father ____ a doctor.", a: "is", c: ["is", "am", "are"]},
+    {cat: "Be-verbs", q: "빈칸: I ____ happy to see you again.", a: "am", c: ["am", "is", "are"]},
+    {cat: "Be-verbs", q: "빈칸: They ____ very kind to the turtle.", a: "are", c: ["are", "is", "am"]},
+    {cat: "Be-verbs", q: "빈칸: It ____ not easy to win the race.", a: "is", c: ["is", "am", "are"]},
+    {cat: "Be-verbs", q: "빈칸: You ____ a smart student.", a: "are", c: ["are", "am", "is"]},
+    {cat: "Be-verbs", q: "부정문 축약형이 '틀린' 것은?", a: "I amn't", c: ["I amn't", "You aren't", "She isn't"]},
+    {cat: "Be-verbs", q: "빈칸: My brother and I ____ at home now.", a: "are", c: ["are", "is", "am"]},
+    {cat: "Be-verbs", q: "빈칸: These posters ____ very colorful.", a: "are", c: ["are", "is", "am"]},
+    {cat: "Be-verbs", q: "빈칸: Jisu ____ (not) a liar.", a: "is not", c: ["is not", "am not", "are not"]},
+
+    // [General Verbs - 일반동사]
+    {cat: "General Verbs", q: "빈칸: He ____ (make) a cotton candy for me.", a: "makes", c: ["makes", "make", "makees"]},
+    {cat: "General Verbs", q: "빈칸: She ____ (study) hard every day.", a: "studies", c: ["studies", "studys", "studyes"]},
+    {cat: "General Verbs", q: "빈칸: My cat ____ (cry) at night.", a: "cries", c: ["cries", "cryes", "crys"]},
+    {cat: "General Verbs", q: "빈칸: He ____ (not enjoy) horror movies.", a: "doesn't enjoy", c: ["doesn't enjoy", "don't enjoy", "not enjoys"]},
+    {cat: "General Verbs", q: "빈칸: They ____ (not share) their secrets.", a: "don't share", c: ["don't share", "doesn't share", "not shares"]},
+    {cat: "General Verbs", q: "빈칸: My sister ____ (have) a perfect thought.", a: "has", c: ["has", "haves", "have"]},
+    {cat: "General Verbs", q: "빈칸: He ____ (wash) his hands easily.", a: "washes", c: ["washes", "washs", "wash"]},
+    {cat: "General Verbs", q: "빈칸: The honeybee ____ (fly) to the flower.", a: "flies", c: ["flies", "flys", "fly"]},
+    {cat: "General Verbs", q: "빈칸: Tom ____ (watch) a cartoon on TV.", a: "watches", c: ["watches", "watchs", "watch"]},
+    {cat: "General Verbs", q: "빈칸: We ____ (like) turtles a lot.", a: "like", c: ["like", "likes", "liking"]},
+
+    // [중복 방지 및 문장 완성형 추가]
+    {cat: "Mixed", q: "빈칸: It ____ my first conversation with him.", a: "is", c: ["is", "am", "are"]},
+    {cat: "Mixed", q: "빈칸: The character in the book ____ (be) smart.", a: "is", c: ["is", "am", "are"]},
+    {cat: "Mixed", q: "빈칸: I ____ (thought) about the subject deeply.", a: "think", c: ["think", "thinks", "thinking"]},
+    {cat: "Mixed", q: "부정문: He ____ ____ (like) turtles.", a: "doesn't like", c: ["doesn't like", "don't like", "isn't like"]},
+    {cat: "Mixed", q: "빈칸: Success ____ (not come) easily.", a: "doesn't come", c: ["doesn't come", "don't come", "not comes"]},
+    {cat: "Mixed", q: "빈칸: She ____ (try) her best every time.", a: "tries", c: ["tries", "trys", "try"]},
+    {cat: "Mixed", q: "빈칸: They ____ (go) to school together.", a: "go", c: ["go", "goes", "going"]},
+    {cat: "Mixed", q: "영영풀이: 'a sign made of paper... used for advertising'", a: "poster", c: ["poster", "subject", "cartoon"]},
+    {cat: "Mixed", q: "영영풀이: 'without effort, pain, or trouble'", a: "easily", c: ["easily", "really", "active"]},
+    {cat: "Mixed", q: "빈칸: I ____ (not be) a perfect person.", a: "am not", c: ["am not", "is not", "are not"]}
 ];
 
+// 게임 로직 및 확률 설정 (90% 🌱, 10% 🌿)
 let houses = 0, selectedIdx = -1, wrongCount = 0;
 let garden = Array(16).fill(0);
 const icons = ["", "🌱", "🌿", "🌷", "🌳", "🏡"];
@@ -126,24 +144,26 @@ function startGame() { document.getElementById('intro-overlay').style.display = 
 function openQuiz() {
     wrongCount = 0;
     const q = quizData[Math.floor(Math.random() * quizData.length)];
+    document.getElementById('q-category').textContent = `[${q.cat}]`;
     document.getElementById('q-text').textContent = q.q;
     const optBox = document.getElementById('options');
     optBox.innerHTML = '';
-    [...q.c].sort(() => Math.random() - 0.5).forEach(choice => {
+    const choices = [...q.c].sort(() => Math.random() - 0.5);
+    
+    choices.forEach(choice => {
         const btn = document.createElement('button');
         btn.className = 'ans-btn';
         btn.textContent = choice;
         btn.onclick = () => {
             if(choice === q.a) {
-                spawnItem(1);
+                const rand = Math.random();
+                const spawnLevel = (rand < 0.9) ? 1 : 2; 
+                spawnItem(spawnLevel);
                 document.getElementById('quiz-overlay').style.display = 'none';
             } else {
                 wrongCount++;
-                if(wrongCount >= 2) { 
-                    startPenalty(); 
-                } else {
-                    alert("Wrong! One more chance.");
-                }
+                if(wrongCount >= 2) startPenalty();
+                else alert("Wrong! One more chance.");
             }
         };
         optBox.appendChild(btn);
@@ -152,10 +172,10 @@ function openQuiz() {
 }
 
 function startPenalty() {
-    document.getElementById('quiz-overlay').style.display = 'none';
     const lock = document.getElementById('lock-overlay');
     const timerText = document.getElementById('lock-timer');
     lock.style.display = 'flex';
+    document.getElementById('quiz-overlay').style.display = 'none';
     let count = 5;
     const interval = setInterval(() => {
         count--;
@@ -164,6 +184,7 @@ function startPenalty() {
             clearInterval(interval);
             lock.style.display = 'none';
             timerText.textContent = "5";
+            wrongCount = 0;
         }
     }, 1000);
 }
@@ -183,10 +204,7 @@ function handleSlotClick(idx) {
     else {
         if (garden[selectedIdx] === garden[idx]) {
             garden[idx] += 1; garden[selectedIdx] = 0;
-            if (garden[idx] === 5) { 
-                houses++; 
-                document.getElementById('house-count').textContent = houses;
-            }
+            if (garden[idx] === 5) { houses++; document.getElementById('house-count').textContent = houses; }
             selectedIdx = -1; updateGarden();
             setTimeout(() => { if(houses >= 3) alert("CONGRATULATIONS!\nYou built 3 houses! ✨🏡"); }, 100);
         } else { selectedIdx = idx; updateGarden(); document.getElementById(`slot-${idx}`).classList.add('selected'); }
