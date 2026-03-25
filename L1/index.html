@@ -9,13 +9,14 @@
         body { margin: 0; background: var(--main-bg); font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; height: 100vh; overflow: hidden; }
         #intro-overlay { position: fixed; inset: 0; background: white; z-index: 200; display: flex; flex-direction: column; align-items: center; padding: 20px; text-align: center; overflow-y: auto; }
         .info-card { background: #f9f9f9; padding: 15px; border-radius: 20px; border: 1px solid #e0e0e0; margin-bottom: 15px; width: 100%; max-width: 450px; text-align: left; }
-        .info-card h3 { color: #388e3c; margin-top: 0; border-bottom: 1px solid #ddd; padding-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+        .info-card h3 { color: #388e3c; margin-top: 0; border-bottom: 1px solid #ddd; padding-bottom: 5px; display: flex; align-items: center; gap: 8px; font-size: 1.1rem; }
         #header { width: 100%; max-width: 500px; padding: 15px; background: white; border-bottom: 5px solid #a5d6a7; text-align: center; font-weight: bold; font-size: 1.2rem; color: var(--accent); }
         #garden { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; width: 90%; max-width: 400px; margin: 15px 0; background: #c8e6c9; padding: 15px; border-radius: 25px; }
         .slot { aspect-ratio: 1; background: #a5d6a7; border-radius: 15px; display: flex; justify-content: center; align-items: center; font-size: 2rem; cursor: pointer; transition: 0.2s; border: 2px dashed rgba(255,255,255,0.4); }
         .slot.has-item { background: white; border: 2px solid #81c784; box-shadow: 0 4px 0 #81c784; }
         .slot.selected { border: 4px solid #fbc02d; background: #fff9c4; transform: scale(1.05); }
         .main-btn { padding: 15px 60px; background: var(--accent); color: white; border-radius: 50px; border: none; font-size: 1.4rem; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #1b5e20; }
+        .indent { display: block; padding-left: 1.2em; color: #666; font-size: 0.95rem; margin-top: 2px; }
         #quiz-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 100; }
         #quiz-card { background: white; width: 85%; max-width: 350px; padding: 25px; border-radius: 30px; text-align: center; border: 5px solid var(--accent); }
         .ans-btn { display: block; width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #eee; border-radius: 12px; background: #fdfdfd; font-size: 1rem; cursor: pointer; font-weight: bold; }
@@ -28,23 +29,27 @@
 <div id="intro-overlay">
     <h2 style="color:var(--accent)">🏡 Building a House with BOHYEON Teacher!</h2>
     <div class="info-card">
-        <h3>🎯 Learning Goals (Lesson 1)</h3>
-        <p><b>Lesson 1 핵심 정리:</b></p>
-        <ul>
-            <li><b>Vocabulary:</b> 24 words & English definitions</li>
+        <h3>🎯 Learning Goals</h3>
+        <p style="margin-bottom: 8px;">Let's review what we learned:</p>
+        <ul style="margin: 0; padding-left: 20px;">
             <li><b>Be-verbs:</b> am, are, is and negative forms</li>
-            <li><b>General Verbs:</b> 3rd person singular and negative forms</li>
+            <li><b>General Verbs:</b> Usage and negative forms</li>
+            <li><b>Unit 1:</b> New words and expressions</li>
         </ul>
     </div>
     <div class="info-card">
         <h3>🎮 How to Play</h3>
-        <p>1. Solve the <b>Quiz</b> to get items.<br>(90% 🌱, 10% 🌿 Lucky Get!)</p>
-        <p>2. Merge <b>SAME</b> items to build a house.<br>(🌱 → 🌿 → 🌷 → 🌳 → 🏡)</p>
+        <p style="margin: 0;">1. Solve the <b>Quiz</b> to get items.
+            <span class="indent">(Get 🌱 or sometimes 🌿 Lucky!)</span>
+        </p>
+        <p style="margin: 12px 0 0 0;">2. Merge <b>SAME</b> items to build a house.
+            <span class="indent">(🌱 → 🌿 → 🌷 → 🌳 → House 🏡)</span>
+        </p>
     </div>
     <div class="info-card" style="border: 2px solid #fbc02d; background: #fffde7;">
         <h3 style="color: #f57f17;">⚠️ Caution!</h3>
-        <p>❌ 2 Misses = <b>5 seconds Lock!</b></p>
-        <p>🏆 Build 3 houses to win!</p>
+        <p style="margin: 0;">❌ 2 Misses = <b>5 seconds Lock!</b></p>
+        <p style="margin: 5px 0 0 0;">🏆 Build 3 houses to win!</p>
     </div>
     <button class="main-btn" onclick="startGame()">START GAME</button>
 </div>
@@ -62,34 +67,47 @@
 <div id="quiz-overlay"><div id="quiz-card"><h3 id="q-text"></h3><div id="options"></div></div></div>
 
 <script>
+// 1과 문제 데이터
 const allQuestions = [
     {q: "'active' means?", a: "활동적인", c: ["활동적인", "창의적인", "친절한"]},
     {q: "'patient' means?", a: "참을성 있는", c: ["참을성 있는", "영리한", "완벽한"]},
     {q: "Definition: 'a talk between people'", a: "conversation", c: ["conversation", "cartoon", "poster"]},
     {q: "I ____ a student.", a: "am", c: ["am", "is", "are"]},
-    {q: "They ____ very active.", a: "are", c: ["are", "is", "am"]},
     {q: "She ____ (study) English.", a: "studies", c: ["studies", "studys", "studyes"]},
     {q: "He ____ (not like) horror movies.", a: "doesn't like", c: ["doesn't like", "don't like", "not likes"]},
     {q: "Definition: 'a person who tells lies'", a: "liar", c: ["liar", "character", "honeybee"]},
     {q: "'creative' means?", a: "창의적인", c: ["창의적인", "활동적인", "쉬운"]},
-    {q: "We ____ in harmony with nature.", a: "are", c: ["are", "is", "am"]},
+    {q: "'subject' means?", a: "과목", c: ["과목", "생각", "포스터"]},
+    {q: "They ____ very active.", a: "are", c: ["are", "is", "am"]},
     {q: "Definition: 'kind and helpful'", a: "friendly", c: ["friendly", "smart", "active"]},
-    {q: "It ____ (not rain) today.", a: "is not raining", c: ["is not raining", "are not raining", "am not raining"]},
-    {q: "They ____ (have) a contest.", a: "have", c: ["have", "has", "haves"]},
-    {q: "My dog ____ (play) with a ball.", a: "plays", c: ["plays", "playes", "play"]}
+    {q: "My sister ____ (have) a cute dog.", a: "has", c: ["has", "have", "haves"]},
+    {q: "You ____ not my teacher.", a: "are", c: ["are", "is", "am"]},
+    {q: "'harmony' means?", a: "조화", c: ["조화", "성격", "대화"]},
+    {q: "Definition: 'a person in a book or movie'", a: "character", c: ["character", "author", "poster"]},
+    {q: "Birds ____ (fly) in the sky.", a: "fly", c: ["fly", "flies", "flys"]},
+    {q: "Tom ____ (not watch) TV.", a: "doesn't watch", c: ["doesn't watch", "don't watch", "not watch"]},
+    {q: "Is she happy? - Yes, she ____.", a: "is", c: ["is", "am", "are"]},
+    {q: "'perfect' means?", a: "완벽한", c: ["완벽한", "평범한", "어려운"]},
+    {q: "Definition: 'to make something new'", a: "create", c: ["create", "study", "wait"]}
 ];
 
-let quizPool = [...allQuestions], houses = 0, selectedIdx = -1, wrongCount = 0, garden = Array(16).fill(0);
+let usedQuestions = [];
+let quizPool = [...allQuestions];
+let houses = 0, selectedIdx = -1, wrongCount = 0, garden = Array(16).fill(0);
 const icons = ["", "🌱", "🌿", "🌷", "🌳", "🏡"];
 
 function startGame() { document.getElementById('intro-overlay').style.display = 'none'; }
 
 function openQuiz() {
     if(garden.filter(v => v === 0).length === 0) { alert("Garden is full! Merge items first. 🪴"); return; }
-    if(quizPool.length === 0) quizPool = [...allQuestions];
+    if(quizPool.length === 0) {
+        quizPool = [...allQuestions];
+        usedQuestions = [];
+    }
     wrongCount = 0;
     const idx = Math.floor(Math.random() * quizPool.length);
     const q = quizPool.splice(idx, 1)[0];
+    usedQuestions.push(q);
     document.getElementById('q-text').textContent = q.q;
     const optBox = document.getElementById('options');
     optBox.innerHTML = '';
