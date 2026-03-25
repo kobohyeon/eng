@@ -3,69 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Building a House with BOHYEON Teacher!</title>
+    <title>Building a House with BOHYEON Teacher! - L2</title>
     <style>
         :root { --main-bg: #f1f8e9; --accent: #2e7d32; --danger: #d32f2f; }
-        body { margin: 0; background: var(--main-bg); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; height: 100vh; overflow: hidden; }
+        body { margin: 0; background: var(--main-bg); font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; height: 100vh; overflow: hidden; }
         
+        /* 인트로 레이어 */
         #intro-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 40px 20px; text-align: center; box-sizing: border-box; overflow-y: auto; }
         #intro-overlay h1 { color: var(--accent); font-size: 1.8rem; margin-bottom: 25px; }
         .info-card { background: #f9f9f9; padding: 20px; border-radius: 20px; border: 1px solid #e0e0e0; margin-bottom: 15px; width: 100%; max-width: 450px; text-align: left; box-sizing: border-box; }
         .info-card h3 { margin-top: 0; color: #388e3c; border-bottom: 2px solid #a5d6a7; padding-bottom: 8px; font-size: 1.1rem; }
-        .info-card ul, .info-card ol { padding-left: 20px; margin: 10px 0; }
+        .info-card ul { padding-left: 20px; margin: 10px 0; }
         .info-card li { margin-bottom: 8px; line-height: 1.5; font-size: 1rem; color: #333; }
         .caution-card { border: 2px solid #fbc02d; background: #fffde7; }
         
+        /* 메인 UI */
         #header { width: 100%; max-width: 500px; padding: 20px; background: white; border-bottom: 5px solid #a5d6a7; display: flex; justify-content: center; font-weight: bold; font-size: 1.3rem; color: var(--accent); box-sizing: border-box; }
         #garden { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 90%; max-width: 400px; margin: 20px 0; background: #c8e6c9; padding: 15px; border-radius: 25px; box-shadow: inset 0 5px 15px rgba(0,0,0,0.1); }
-        .slot { aspect-ratio: 1; background: #a5d6a7; border-radius: 15px; border: 2px dashed rgba(255,255,255,0.4); display: flex; justify-content: center; align-items: center; font-size: 2.2rem; cursor: pointer; transition: 0.2s; position: relative; }
+        .slot { aspect-ratio: 1; background: #a5d6a7; border-radius: 15px; border: 2px dashed rgba(255,255,255,0.4); display: flex; justify-content: center; align-items: center; font-size: 2.2rem; cursor: pointer; transition: 0.2s; }
         .slot.has-item { background: white; border-style: solid; border-color: #81c784; box-shadow: 0 4px 0 #81c784; }
         .slot.selected { border: 4px solid #fbc02d; background: #fff9c4; transform: scale(1.05); z-index: 10; }
         
-        .main-btn { padding: 15px 60px; background: var(--accent); color: white; border-radius: 50px; border: none; font-size: 1.4rem; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #1b5e20; }
+        .main-btn { padding: 15px 60px; background: var(--accent); color: white; border-radius: 50px; border: none; font-size: 1.4rem; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #1b5e20; transition: 0.3s; }
+        
+        /* 퀴즈 팝업 */
         #quiz-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 100; }
         #quiz-card { background: white; width: 85%; max-width: 380px; padding: 30px; border-radius: 30px; text-align: center; border: 6px solid var(--accent); }
         .ans-btn { display: block; width: 100%; padding: 15px; margin: 12px 0; border: 2px solid #eee; border-radius: 15px; background: #fdfdfd; font-size: 1.1rem; cursor: pointer; font-weight: bold; }
-        #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(211, 47, 47, 0.9); display: none; z-index: 300; flex-direction: column; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 2rem; text-align: center; }
+        
+        /* 5초 정답 피드백 화면 */
+        #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(56, 142, 60, 0.95); display: none; z-index: 300; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; padding: 20px; }
+        #lock-msg { font-size: 1.2rem; margin-bottom: 10px; color: #c8e6c9; }
+        #lock-answer { font-size: 2.2rem; font-weight: 900; margin-bottom: 30px; color: #fff; border-bottom: 3px solid #fff; padding-bottom: 5px; }
+        #lock-timer-box { font-size: 1.4rem; background: rgba(255,255,255,0.2); padding: 10px 30px; border-radius: 50px; }
     </style>
 </head>
 <body>
 
 <div id="intro-overlay">
     <h1>🏡 Building a House with BOHYEON Teacher!</h1>
-    
     <div class="info-card">
         <h3>🎯 Learning Goals (Lesson 2)</h3>
-        <p style="margin: 5px 0; font-weight: bold; color: #1b5e20;">Let's review what we learned:</p>
         <ul>
             <li><b>Present Progressive:</b> be + -ing</li>
-            <li><b>Questions:</b> Making various questions</li>
-            <li><b>Unit 2 Vocab:</b> New words and definitions</li>
+            <li><b>Questions:</b> Am/Are/Is ...?</li>
+            <li><b>L2 Vocabulary:</b> lettuce, gym, contest...</li>
         </ul>
     </div>
-
-    <div class="info-card">
-        <h3>🎮 How to Play</h3>
-        <ol>
-            <li>Solve the <b>Quiz</b> to get items.<br>
-                <span style="color: #666; font-size: 0.9rem;">(90% 🌱, 10% 🌿 <b>Lucky Get!</b>)</span></li>
-            <li>Merge <b>SAME</b> items to build a house.<br>
-                <span style="color: #666; font-size: 0.9rem;">( 🌱 → 🌿 → 🌷 → 🌳 → 🏡 )</span></li>
-        </ol>
-    </div>
-
     <div class="info-card caution-card">
-        <h3>⚠️ Caution!</h3>
+        <h3>⚠️ Game Rules</h3>
         <ul>
-            <li>❌ 2 Misses = <b>5 seconds Lock!</b></li>
-            <li>🏆 Build 3 houses to win!</li>
+            <li>❌ 2 Misses = <b>Checking the Answer! (5s)</b></li>
+            <li>🪴 If the garden is full, merge items first!</li>
         </ul>
     </div>
-
     <button class="main-btn" onclick="startGame()">START GAME</button>
 </div>
 
-<div id="lock-overlay">🚫 Focus Time!<br><span id="lock-timer">5</span>s</div>
+<div id="lock-overlay">
+    <div id="lock-msg">Remember this! The answer is:</div>
+    <div id="lock-answer">ANSWER</div>
+    <div id="lock-timer-box">Next question in <span id="lock-timer">5</span>s</div>
+</div>
 
 <div id="header">
     <span>🏡 My Houses: <span id="house-count">0</span> / 3</span>
@@ -76,7 +75,7 @@
 </div>
 
 <div style="text-align: center;">
-    <button class="main-btn" onclick="openQuiz()">GET ITEM (Quiz)</button>
+    <button id="quiz-btn" class="main-btn" onclick="openQuiz()">GET ITEM (Quiz)</button>
 </div>
 
 <div id="quiz-overlay">
@@ -87,88 +86,31 @@
 </div>
 
 <script>
-// 2단원 70문항 데이터 (중복 방지 로직 적용)
+// 2과(L2) 문제 데이터
 const allQuestions = [
-    // [Vocab & Definition]
-    {q: "'lettuce'의 뜻은?", a: "상추", c: ["상추", "상상", "고기"]},
-    {q: "'contest'의 뜻은?", a: "대회, 경연", c: ["대회, 경연", "연습", "축제"]},
-    {q: "'practice'의 뜻은?", a: "연습하다", c: ["연습하다", "공부하다", "준비하다"]},
-    {q: "'prize'의 뜻은?", a: "상, 상품", c: ["상, 상품", "가격", "선물"]},
-    {q: "'gym'의 뜻은?", a: "체육관", c: ["체육관", "상점", "도서관"]},
-    {q: "Definition: 'a living thing that has leaves and roots'", a: "plant", c: ["plant", "dust", "bubble"]},
-    {q: "Definition: 'an award for the winner in a contest'", a: "prize", c: ["prize", "special", "event"]},
-    {q: "Definition: 'not ordinary or usual'", a: "special", c: ["special", "excited", "even"]},
-    {q: "Definition: 'to travel on a bicycle or motorbike'", a: "ride", c: ["ride", "run", "follow"]},
-    {q: "'rock climbing'의 뜻은?", a: "암벽 등반", c: ["암벽 등반", "축구", "수영"]},
-    {q: "'bubble'의 뜻은?", a: "거품", c: ["거품", "바람", "물방울"]},
-    {q: "'soon'의 뜻은?", a: "곧, 금방", c: ["곧, 금방", "나중에", "항상"]},
-    {q: "'through'의 뜻은?", a: "~을 통해", c: ["~을 통해", "~옆에", "~위에"]},
-    {q: "'excited'의 뜻은?", a: "신난", c: ["신난", "슬픈", "지루한"]},
-    {q: "'follow'의 뜻은?", a: "뒤따르다", c: ["뒤따르다", "앞서가다", "기다리다"]},
-    {q: "'cafeteria'의 뜻은?", a: "구내식당", c: ["구내식당", "체육관", "교실"]},
-    {q: "'dust'의 뜻은?", a: "흙먼지", c: ["흙먼지", "공기", "안개"]},
-    {q: "'even'의 뜻은?", a: "~까지도", c: ["~까지도", "벌써", "결국"]},
-    {q: "'tunnel'의 뜻은?", a: "터널", c: ["터널", "다리", "계단"]},
-    {q: "Definition: 'a room for doing sports'", a: "gym", c: ["gym", "cafeteria", "stage"]},
-
-    // [Present Progressive - 문장 중심]
-    {q: "What's the correct form of Present Progressive?", a: "be + V-ing", c: ["be + V-ing", "do + V-ing", "be + p.p"]},
+    {q: "'lettuce'의 뜻은?", a: "상추", c: ["상추", "양배추", "시금치"]},
+    {q: "'contest'의 뜻은?", a: "대회", c: ["대회", "공부", "운동"]},
+    {q: "'practice'의 뜻은?", a: "연습하다", c: ["연습하다", "말하다", "듣다"]},
+    {q: "'gym'의 뜻은?", a: "체육관", c: ["체육관", "도서관", "미술실"]},
+    {q: "'prize'의 뜻은?", a: "상, 상품", c: ["상, 상품", "선물", "가격"]},
+    {q: "He ____ (run) in the park now.", a: "is running", c: ["is running", "are running", "am running"]},
+    {q: "____ you watching a movie?", a: "Are", c: ["Are", "Is", "Am"]},
     {q: "Correct -ing form for 'swim'?", a: "swimming", c: ["swimming", "swiming", "swimering"]},
     {q: "Correct -ing form for 'write'?", a: "writing", c: ["writing", "writeing", "writting"]},
-    {q: "Correct -ing form for 'die'?", a: "dying", c: ["dying", "dieing", "deying"]},
-    {q: "He ____ (run) in the park now.", a: "is running", c: ["is running", "am running", "are running"]},
-    {q: "They ____ (not eat) lunch.", a: "are not eating", c: ["are not eating", "is not eating", "am not eating"]},
-    {q: "I ____ (read) a book.", a: "am reading", c: ["am reading", "is reading", "are reading"]},
-    {q: "Jane ____ (take) a picture.", a: "is taking", c: ["is taking", "are taking", "am taking"]},
-    {q: "Correct -ing form for 'sit'?", a: "sitting", c: ["sitting", "siting", "sitering"]},
-    {q: "Correct -ing form for 'tie'?", a: "tying", c: ["tying", "tieing", "titing"]},
-    {q: "It ____ (not rain) at the moment.", a: "is not raining", c: ["is not raining", "are not raining", "not rains"]},
-    {q: "We ____ (have) a great time.", a: "are having", c: ["are having", "is having", "haveing"]},
-    {q: "My mom ____ (bake) cookies.", a: "is baking", c: ["is baking", "are baking", "baking"]},
-    {q: "The birds ____ (fly) in the sky.", a: "are flying", c: ["are flying", "is flying", "flys"]},
-
-    // [Questions]
-    {q: "____ you watching a movie?", a: "Are", c: ["Are", "Is", "Am"]},
     {q: "What ____ she doing?", a: "is", c: ["is", "are", "do"]},
-    {q: "Correct order: 'Where / he / is / going'?", a: "Where is he going?", c: ["Where is he going?", "Where he is going?", "Is where he going?"]},
-    {q: "'Are you studying?' - 'Yes, ____ ____.'", a: "I am", c: ["I am", "I'm", "I do"]},
-    {q: "'Is she crying?' - 'No, ____ ____.'", a: "she isn't", c: ["she isn't", "she doesn't", "she not"]},
-    {q: "____ the dog sleeping?", a: "Is", c: ["Is", "Are", "Does"]},
-    {q: "Who ____ they waiting for?", a: "are", c: ["are", "is", "am"]},
-    {q: "____ he preparing for the contest?", a: "Is", c: ["Is", "Are", "Does"]},
-    {q: "What ____ you eating?", a: "are", c: ["are", "is", "am"]},
-    {q: "Are they playing soccer? - No, they ____.", a: "aren't", c: ["aren't", "isn't", "don't"]},
-    
-    // [추가 문항 - 이미지 데이터 기반 70개까지 확장]
-    {q: "'prepare'의 뜻은?", a: "준비하다", c: ["준비하다", "연습하다", "심다"]},
-    {q: "'stage'의 뜻은?", a: "무대", c: ["무대", "터널", "복도"]},
-    {q: "I ____ (not) listening to music.", a: "am not", c: ["am not", "is not", "are not"]},
-    {q: "Look! They ____ (dance) on the stage.", a: "are dancing", c: ["are dancing", "is dancing", "dancing"]},
-    {q: "What ____ he making?", a: "is", c: ["is", "are", "do"]},
-    {q: "Is she running? - Yes, she ____.", a: "is", c: ["is", "does", "am"]},
-    {q: "____ you having fun?", a: "Are", c: ["Are", "Is", "Do"]},
-    {q: "The cat ____ (sleep) on the desk.", a: "is sleeping", c: ["is sleeping", "are sleeping", "sleeps"]},
-    {q: "We ____ (not study) math now.", a: "are not studying", c: ["are not studying", "is not studying", "don't study"]},
-    {q: "Definition: 'to come after someone'", a: "follow", c: ["follow", "ride", "run"]},
-    {q: "Definition: 'a long passage under the ground'", a: "tunnel", c: ["tunnel", "gym", "stage"]},
-    {q: "Correct -ing form for 'dance'?", a: "dancing", c: ["dancing", "danceing", "danccing"]},
-    {q: "Correct -ing form for 'put'?", a: "putting", c: ["putting", "puting", "putteing"]},
-    {q: "Are we going home? - Yes, ____ ____.", a: "we are", c: ["we are", "you are", "we do"]},
-    {q: "____ it raining outside?", a: "Is", c: ["Is", "Are", "Does"]},
-    {q: "What ____ they riding?", a: "are", c: ["are", "is", "do"]},
-    {q: "I ____ (wait) for the bus.", a: "am waiting", c: ["am waiting", "is waiting", "are waiting"]},
-    {q: "Is he eating lettuce? - No, he ____.", a: "isn't", c: ["isn't", "is not", "doesn't"]},
-    {q: "She ____ (practice) the piano.", a: "is practicing", c: ["is practicing", "are practicing", "practiceing"]},
-    {q: "Are you feeling excited? - Yes, ____ ____.", a: "I am", c: ["I am", "I'm", "I feel"]},
-    {q: "____ they following the teacher?", a: "Are", c: ["Are", "Is", "Do"]},
-    {q: "The water ____ (make) bubbles.", a: "is making", c: ["is making", "are making", "makes"]},
-    {q: "We ____ (not) ride a bike now.", a: "are not riding", c: ["are not riding", "is not riding", "don't ride"]},
-    {q: "What ____ the special event?", a: "is", c: ["is", "are", "am"]},
-    {q: "He ____ (sit) on the chair.", a: "is sitting", c: ["is sitting", "sitting", "is siting"]},
-    {q: "Is the prize big? - Yes, ____ ____.", a: "it is", c: ["it is", "he is", "is it"]}
+    {q: "They ____ (dance) on the stage.", a: "are dancing", c: ["are dancing", "is dancing", "dancing"]},
+    {q: "'prepare'의 뜻은?", a: "준비하다", c: ["준비하다", "공부하다", "청소하다"]},
+    {q: "Definition: 'a living thing with leaves'", a: "plant", c: ["plant", "animal", "rock"]},
+    {q: "Is it raining? - No, it ____.", a: "isn't", c: ["isn't", "don't", "not"]},
+    {q: "I ____ (study) for the test now.", a: "am studying", c: ["am studying", "is studying", "are studying"]},
+    {q: "____ they playing soccer?", a: "Are", c: ["Are", "Is", "Do"]},
+    {q: "She ____ (not/sing) a song.", a: "is not singing", c: ["is not singing", "is not sing", "am not singing"]},
+    {q: "Correct -ing form for 'make'?", a: "making", c: ["making", "makeing", "makking"]},
+    {q: "We ____ (have) lunch now.", a: "are having", c: ["are having", "is having", "having"]},
+    {q: "Look! The cat ____ (sleep).", a: "is sleeping", c: ["is sleeping", "are sleeping", "sleeps"]}
 ];
 
-let quizPool = [...allQuestions]; // 문제 중복 방지를 위한 복사본
+let quizPool = [...allQuestions]; 
 let houses = 0, selectedIdx = -1, wrongCount = 0;
 let garden = Array(16).fill(0);
 const icons = ["", "🌱", "🌿", "🌷", "🌳", "🏡"];
@@ -176,13 +118,17 @@ const icons = ["", "🌱", "🌿", "🌷", "🌳", "🏡"];
 function startGame() { document.getElementById('intro-overlay').style.display = 'none'; }
 
 function openQuiz() {
-    if(quizPool.length === 0) quizPool = [...allQuestions]; // 모든 문제 소진 시 리셋
-    
+    // 1. 정원 빈자리 체크
+    const emptySlots = garden.map((v, i) => v === 0 ? i : null).filter(v => v !== null);
+    if(emptySlots.length === 0) {
+        alert("The garden is full! Merge items first. 🪴");
+        return;
+    }
+
+    if(quizPool.length === 0) quizPool = [...allQuestions]; 
     wrongCount = 0;
     const randomIndex = Math.floor(Math.random() * quizPool.length);
     const q = quizPool[randomIndex];
-    
-    // 출제된 문제는 풀에서 즉시 제거 (중복 방지 핵심)
     quizPool.splice(randomIndex, 1);
 
     document.getElementById('q-text').textContent = q.q;
@@ -197,12 +143,11 @@ function openQuiz() {
         btn.onclick = () => {
             if(choice === q.a) {
                 const rand = Math.random();
-                const spawnLevel = (rand < 0.9) ? 1 : 2; 
-                spawnItem(spawnLevel);
+                spawnItem((rand < 0.9) ? 1 : 2);
                 document.getElementById('quiz-overlay').style.display = 'none';
             } else {
                 wrongCount++;
-                if(wrongCount >= 2) startPenalty();
+                if(wrongCount >= 2) startPenalty(q.a);
                 else alert("Wrong! One more chance.");
             }
         };
@@ -211,11 +156,15 @@ function openQuiz() {
     document.getElementById('quiz-overlay').style.display = 'flex';
 }
 
-function startPenalty() {
+function startPenalty(correctAnswer) {
     const lock = document.getElementById('lock-overlay');
     const timerText = document.getElementById('lock-timer');
+    const answerDisplay = document.getElementById('lock-answer');
+    
+    answerDisplay.textContent = correctAnswer;
     lock.style.display = 'flex';
     document.getElementById('quiz-overlay').style.display = 'none';
+    
     let count = 5;
     const interval = setInterval(() => {
         count--;
@@ -231,7 +180,9 @@ function startPenalty() {
 
 function spawnItem(lv) {
     const emptySlots = garden.map((v, i) => v === 0 ? i : null).filter(v => v !== null);
-    if(emptySlots.length > 0) garden[emptySlots[Math.floor(Math.random() * emptySlots.length)]] = lv;
+    if(emptySlots.length > 0) {
+        garden[emptySlots[Math.floor(Math.random() * emptySlots.length)]] = lv;
+    }
     updateGarden();
 }
 
@@ -246,18 +197,29 @@ function handleSlotClick(idx) {
             garden[idx] += 1; garden[selectedIdx] = 0;
             if (garden[idx] === 5) { houses++; document.getElementById('house-count').textContent = houses; }
             selectedIdx = -1; updateGarden();
-            setTimeout(() => { if(houses >= 3) alert("CONGRATULATIONS!\nYou built 3 houses! ✨🏡"); }, 100);
+            setTimeout(() => { if(houses >= 3) alert("🏆 MISSION COMPLETE!\nYou built 3 houses!"); }, 100);
         } else { selectedIdx = idx; updateGarden(); document.getElementById(`slot-${idx}`).classList.add('selected'); }
     }
 }
 
 function updateGarden() {
+    let emptySlots = 0;
     garden.forEach((v, i) => {
         const slot = document.getElementById(`slot-${i}`);
         slot.textContent = icons[v];
         slot.className = 'slot' + (v > 0 ? ' has-item' : '');
         if(v === 5) slot.style.background = "#fff9c4";
+        if(v === 0) emptySlots++;
     });
+
+    const qBtn = document.getElementById('quiz-btn');
+    if(emptySlots === 0) {
+        qBtn.style.background = "#999";
+        qBtn.innerText = "GARDEN FULL (Merge!)";
+    } else {
+        qBtn.style.background = "var(--accent)";
+        qBtn.innerText = "GET ITEM (Quiz)";
+    }
 }
 updateGarden();
 </script>
