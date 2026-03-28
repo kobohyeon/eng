@@ -13,13 +13,10 @@
         #add-btn { padding: 8px 15px; border-radius: 10px; border: 1px solid #ccc; background: white; cursor: pointer; font-weight: bold; }
 
         #card-container { position: relative; width: 85vw; max-width: 400px; height: 280px; perspective: 1000px; }
-        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; pointer-events: none; } /* 카드 자체 클릭 방지 */
         .card-inner.is-flipped { transform: rotateY(180deg); }
         
-        /* 카드 앞/뒷면 공통 설정 */
         .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: bold; box-shadow: 0 8px 20px rgba(0,0,0,0.1); border: 1px solid #ddd; text-align: center; padding: 20px; box-sizing: border-box; background: white; }
-        
-        /* 뒷면 설정: 반드시 180도 회전되어 있어야 뒤집었을 때 제대로 보임 */
         .card-back { transform: rotateY(180deg); color: var(--blue); background-color: #f8fbff; border: 3px solid var(--blue); }
         
         .swipe-label { position: absolute; top: 20px; font-size: 1.5rem; font-weight: bold; padding: 5px 15px; border-radius: 10px; opacity: 0; z-index: 10; pointer-events: none; }
@@ -27,14 +24,15 @@
         #label-right { left: 20px; color: var(--green); border: 3px solid var(--green); transform: rotate(-15deg); }
 
         .controls { margin-top: 30px; display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; }
-        #view-btn { width: 220px; padding: 18px; font-size: 1.2rem; font-weight: bold; border: none; border-radius: 50px; background: var(--blue); color: white; box-shadow: 0 4px 15px rgba(0,123,255,0.3); z-index: 50; }
+        #view-btn { width: 220px; padding: 18px; font-size: 1.2rem; font-weight: bold; border: none; border-radius: 50px; background: var(--blue); color: white; box-shadow: 0 4px 15px rgba(0,123,255,0.3); z-index: 100; cursor: pointer; }
         
         .guide-container { display: flex; justify-content: space-between; width: 85vw; max-width: 400px; opacity: 0; transition: opacity 0.3s; }
         .guide-container.visible { opacity: 1; }
 
-        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; }
+        /* 모달 및 기타 UI 생략 (동일) */
+        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; touch-action: auto; }
         .modal-content { background: white; padding: 25px; border-radius: 20px; width: 80%; max-width: 450px; display: flex; flex-direction: column; gap: 15px; }
-        textarea { height: 200px; padding: 10px; border-radius: 10px; border: 1px solid #ccc; font-family: inherit; resize: none; font-size: 1rem; }
+        textarea { height: 200px; padding: 10px; font-size: 1rem; }
     </style>
 </head>
 <body>
@@ -51,6 +49,7 @@
             <div class="card-face card-front" id="front-text">단어</div>
             <div class="card-face card-back" id="back-text">뜻</div>
         </div>
+        <div id="touch-surface" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:50; cursor:grab;"></div>
     </div>
 
     <div class="controls">
@@ -66,7 +65,7 @@
             <h3>단어 목록 편집</h3>
             <textarea id="bulk-input" placeholder="단어:뜻 (한 줄에 하나씩)"></textarea>
             <div style="display:flex; gap:10px;">
-                <button style="flex:1; padding:10px;" onclick="closeModal()">취se</button>
+                <button style="flex:1; padding:10px;" onclick="closeModal()">취소</button>
                 <button style="flex:1; padding:10px; background:var(--blue); color:white; border:none; border-radius:5px;" onclick="saveBulkData()">저장</button>
             </div>
         </div>
@@ -86,6 +85,7 @@
         const countDisplay = document.getElementById('count');
         const labelLeft = document.getElementById('label-left');
         const labelRight = document.getElementById('label-right');
+        const touchSurface = document.getElementById('touch-surface');
 
         let isFlipped = false;
         let startX = 0;
@@ -94,32 +94,33 @@
 
         function updateDisplay() {
             localStorage.setItem('myCards', JSON.stringify(cards));
+            isFlipped = false; // 상태 리셋
+            cardInner.classList.remove('is-flipped'); // 시각적 리셋
+            
             if (cards.length > 0) {
-                isFlipped = false;
                 cardInner.style.transition = "transform 0.4s ease, opacity 0.3s";
-                cardInner.classList.remove('is-flipped');
                 cardInner.style.transform = "rotateY(0deg) translateX(0)";
                 cardInner.style.opacity = "1";
                 
-                // 데이터를 앞/뒷면 각각에 미리 배치
                 frontText.innerText = cards[0].word;
                 backText.innerText = cards[0].mean;
                 
                 countDisplay.innerText = cards.length;
                 viewBtn.innerText = "정답 확인하기";
-                viewBtn.style.display = "block";
+                viewBtn.style.visibility = "visible";
                 guideContainer.classList.remove('visible');
                 document.body.style.backgroundColor = "#f0f2f5";
             } else {
                 frontText.innerText = "🎉 완료!";
                 backText.innerText = "단어를 추가하세요.";
                 countDisplay.innerText = 0;
-                viewBtn.style.display = "none";
+                viewBtn.style.visibility = "hidden";
             }
         }
 
-        // 정답 확인 버튼 로직
-        viewBtn.addEventListener('click', () => {
+        // 버튼 클릭 시 '즉시' 뒤집기
+        viewBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // 이벤트 전파 방지
             isFlipped = !isFlipped;
             if (isFlipped) {
                 cardInner.classList.add('is-flipped');
@@ -132,43 +133,37 @@
             }
         });
 
-        // 스와이프 로직 (뒷면일 때만 작동)
-        cardInner.addEventListener('touchstart', (e) => {
+        // 스와이프 감지를 별도의 투명 레이어(touch-surface)에서 처리
+        touchSurface.addEventListener('touchstart', (e) => {
             if (!isFlipped) return;
             startX = e.touches[0].clientX;
             isDragging = true;
             cardInner.style.transition = "none";
         });
 
-        cardInner.addEventListener('touchmove', (e) => {
+        touchSurface.addEventListener('touchmove', (e) => {
             if (!isDragging) return;
             currentX = e.touches[0].clientX - startX;
-            // 180도 뒤집힌 상태(rotateY(180deg))를 유지하며 이동
             cardInner.style.transform = `rotateY(180deg) translateX(${currentX}px) rotateZ(${currentX/10}deg)`;
 
             if (currentX > 50) {
                 document.body.style.backgroundColor = "#e6fcf5";
                 labelRight.style.opacity = Math.min(currentX/150, 1);
-                labelLeft.style.opacity = 0;
             } else if (currentX < -50) {
                 document.body.style.backgroundColor = "#fff5f5";
                 labelLeft.style.opacity = Math.min(Math.abs(currentX)/150, 1);
-                labelRight.style.opacity = 0;
             }
         });
 
-        cardInner.addEventListener('touchend', () => {
+        touchSurface.addEventListener('touchend', () => {
             if (!isDragging) return;
             isDragging = false;
             cardInner.style.transition = "transform 0.4s ease, opacity 0.3s";
             labelLeft.style.opacity = 0; labelRight.style.opacity = 0;
 
             if (Math.abs(currentX) > 120) {
-                if (currentX > 0) { // 오른쪽: 삭제
-                    cards.shift();
-                } else { // 왼쪽: 유지 (맨 뒤로)
-                    cards.push(cards.shift());
-                }
+                if (currentX > 0) cards.shift(); // 오른쪽: 삭제
+                else cards.push(cards.shift()); // 왼쪽: 유지
                 updateDisplay();
             } else {
                 cardInner.style.transform = "rotateY(180deg) translateX(0)";
@@ -177,7 +172,7 @@
             currentX = 0;
         });
 
-        // 모달 관련
+        // 모달 제어 (기존과 동일)
         document.getElementById('add-btn').onclick = () => {
             document.getElementById('bulk-input').value = cards.map(c => `${c.word}:${c.mean}`).join('\n');
             document.getElementById('modal').style.display = 'flex';
