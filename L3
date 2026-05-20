@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Building a House with BOHYEON Teacher!</title>
+    <style>
+        :root { --main-bg: #f1f8e9; --accent: #2e7d32; --danger: #d32f2f; }
+        body { margin: 0; background: var(--main-bg); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; align-items: center; height: 100vh; overflow: hidden; }
+        
+        /* 인트로 화면 고정 */
+        #intro-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 200; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; box-sizing: border-box; overflow-y: auto; }
+        #intro-overlay h1 { color: var(--accent); font-size: 1.6rem; margin-bottom: 15px; }
+        .info-card { background: #f9f9f9; padding: 15px; border-radius: 20px; border: 2px solid #e0e0e0; margin-bottom: 10px; width: 100%; max-width: 420px; text-align: left; box-sizing: border-box; }
+        .info-card h3 { margin-top: 0; color: #388e3c; border-bottom: 2px solid #a5d6a7; padding-bottom: 5px; font-size: 1.1rem; }
+        
+        /* 들여쓰기 및 리스트 스타일 유지 규칙 */
+        .info-card ol { padding-left: 20px; margin: 10px 0; }
+        .info-card li { margin-bottom: 8px; line-height: 1.4; list-style-position: outside; font-weight: bold; }
+        .indent-text { display: block; margin-top: 2px; color: #666; font-size: 0.95rem; font-weight: normal; }
+
+        #header { width: 100%; max-width: 500px; padding: 15px; background: white; border-bottom: 5px solid #a5d6a7; display: flex; justify-content: space-between; font-weight: bold; font-size: 1.2rem; color: var(--accent); box-sizing: border-box; }
+        #system-status { font-size: 0.9rem; background: #e8f5e9; padding: 2px 10px; border-radius: 10px; }
+
+        #garden { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 90%; max-width: 400px; margin: 20px 0; background: #c8e6c9; padding: 15px; border-radius: 25px; box-shadow: inset 0 5px 15px rgba(0,0,0,0.1); }
+        .slot { aspect-ratio: 1; background: #a5d6a7; border-radius: 15px; border: 2px dashed rgba(255,255,255,0.4); display: flex; justify-content: center; align-items: center; font-size: 2.2rem; cursor: pointer; transition: 0.2s; position: relative; }
+        .slot.has-item { background: white; border-style: solid; border-color: #81c784; box-shadow: 0 4px 0 #81c784; }
+        .slot.selected { border: 4px solid #fbc02d; background: #fff9c4; transform: scale(1.05); z-index: 10; }
+        
+        .main-btn { padding: 15px 45px; background: var(--accent); color: white; border-radius: 50px; border: none; font-size: 1.3rem; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #1b5e20; }
+        .main-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #1b5e20; }
+
+        #quiz-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 100; }
+        #quiz-card { background: white; width: 85%; max-width: 380px; padding: 25px; border-radius: 30px; text-align: center; border: 6px solid var(--accent); max-height: 90vh; overflow-y: auto; box-sizing: border-box; }
+        #q-level { display: inline-block; padding: 4px 10px; background: #e8f5e9; color: var(--accent); border-radius: 10px; font-size: 0.85rem; font-weight: bold; margin-bottom: 10px; }
+        #q-text { margin: 10px 0 20px 0; font-size: 1.2rem; color: #333; line-height: 1.5; white-space: pre-line; }
+        .ans-btn { display: block; width: 100%; padding: 14px; margin: 10px 0; border: 2px solid #eee; border-radius: 15px; background: #fdfdfd; font-size: 1.05rem; cursor: pointer; font-weight: bold; transition: 0.1s; text-align: left; padding-left: 20px; }
+        .ans-btn:hover { background: #f1f8e9; border-color: #a5d6a7; }
+        
+        #lock-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(211, 47, 47, 0.95); display: none; z-index: 300; flex-direction: column; justify-content: center; align-items: center; color: white; font-weight: bold; text-align: center; padding: 20px; box-sizing: border-box; }
+        #lock-title { font-size: 1.8rem; color: #ffcdd2; margin-bottom: 10px; }
+        #lock-answer { font-size: 2.2rem; background: white; color: var(--danger); padding: 15px 30px; border-radius: 20px; margin: 20px 0; box-shadow: 0 5px 15px rgba(0,0,0,0.3); word-break: break-all; }
+        #lock-timer-box { font-size: 1.4rem; }
+    </style>
+</head>
+<body>
+
+<div id="intro-overlay">
+    <h1>🏡 Building a House with BOHYEON Teacher!</h1>
+    
+    <!-- 학습 목표 명시 규칙 준수 -->
+    <div class="info-card">
+        <h3>🎯 Learning Goals</h3>
+        <p style="margin: 5px 0; font-weight: bold; color: #1b5e20;">Let's review what we learned:</p>
+        <ul style="padding-left: 20px; margin: 5px 0; line-height: 1.5;">
+            <li><b>Modal Verbs:</b> can, will</li>
+            <li><b>Imperative Sentences:</b> 명령문</li>
+            <li><b>Present Tense & Present Progressive:</b> 현재형 및 현재진행형</li>
+            <li><b>Questions:</b> 의문문</li>
+            <li><b>New Expressions:</b> 단원 주요 표현</li>
+        </ul>
+    </div>
+
+    <!-- 들여쓰기 및 리스트 스타일 규칙 준수 -->
+    <div class="info-card">
+        <h3>🎮 How to Play</h3>
+        <ol style="list-style-position: outside;">
+            <li>Solve the <b>Quiz</b> to get items.<br>
+                <span class="indent-text">🌱 Get 🌱 or sometimes 🌿 Lucky!</span></li>
+            <li>Merge <b>SAME</b> items to build a house.<br>
+                <span class="indent-text">🌱 + 🌱 → 🌿 → 🌷 → 🌳 → House 🏡</span></li>
+        </ol>
+    </div>
+
+    <div class="info-card" style="border-color: #fbc02d; background: #fffde7;">
+        <h3 style="color: #f57f17;">⚠️ Caution!</h3>
+        <p style="margin: 5px 0; font-size: 0.95rem; line-height: 1.4;">
+            ❌ 2 Misses = <b>5 seconds Lock & Show Answer!</b><br>
+            📈 <b>AI Level Leveling:</b> 한 번에 맞히면 난이도 Up! 두 번 틀리면 난이도 Down!<br>
+            🏆 Goal: Build <b>two houses</b> to win the game!
+        </p>
+    </div>
+
+    <button class="main-btn" onclick="startGame()">START GAME</button>
+</div>
+
+<div id="lock-overlay">
+    <div id="lock-title">🚫 정답 확인 후 잠시 대기! (난이도 하향)</div>
+    <div id="lock-answer">Correct Answer</div>
+    <div id="lock-timer-box">초 후 다음 문제로 이동합니다... (<span id="lock-timer">5</span>초)</div>
+</div>
+
+<div id="header">
+    <span>🏡 My Houses: <span id="house-count">0</span> / 2</span>
+    <span id="system-status">레벨: 보통</span>
+</div>
+
+<div id="garden">
+    <script>for(let i=0; i<16; i++) document.write(`<div class="slot" id="slot-${i}" onclick="handleSlotClick(${i})"></div>`);</script>
+</div>
+
+<div style="text-align: center;">
+    <button id="quiz-btn" class="main-btn" onclick="openQuiz()">GET ITEM (Quiz)</button>
+</div>
+
+<div id="quiz-overlay">
+    <div id="quiz-card">
+        <div id="q-level">난이도</div>
+        <h2 id="q-text">Question</h2>
+        <div id="options"></div>
+    </div>
+</div>
+
+<script>
+// 과거시제를 완전히 제외하고 현재형, 현재진행형, 조동사(can/will), 명령문으로 이루어진 75문항
+const quizData = [
+    // [하 난이도 - 보기 3개] 25문항
+    {q: "명령문 '여기를 봐라.'의 빈칸을 채우세요.\n____ at this.", a: "Look", c: ["Look", "Looking", "Looks"], lv: "하"},
+    {q: "부정명령문 '늦지 마라.'의 빈칸을 채우세요.\n____ be late.", a: "Don't", c: ["Don't", "Not", "No"], lv: "하"},
+    {q: "조동사 can의 의미로 가장 알맞은 것은?", a: "~할 수 있다", c: ["~할 수 있다", "~할 것이다", "~해야 한다"], lv: "하"},
+    {q: "조동사 will의 의미로 가장 알맞은 것은?", a: "~할 것이다", c: ["~할 것이다", "~할 수 있다", "~하지 마라"], lv: "하"},
+    {q: "문장 완성: He can ____ fast.", a: "run", c: ["run", "runs", "running"], lv: "하"},
+    {q: "문장 완성: I will ____ you tomorrow.", a: "meet", c: ["meet", "meets", "meeting"], lv: "하"},
+    {q: "현재진행형 완성: She is ____ a book now.", a: "reading", c: ["reading", "reads", "read"], lv: "하"},
+    {q: "현재진행형 완성: They ____ playing soccer.", a: "are", c: ["are", "is", "am"], lv: "하"},
+    {q: "명령문: ____ your hands before dinner.", a: "Wash", c: ["Wash", "Washing", "Washes"], lv: "하"},
+    {q: "부정명령문: ____ run in the library.", a: "Don't", c: ["Don't", "Not", "Doesn't"], lv: "하"},
+    {q: "의문문 완성: ____ you swim well?", a: "Can", c: ["Can", "Are", "Do"], lv: "하"},
+    {q: "의문문 완성: ____ it rain tonight?", a: "Will", c: ["Will", "Is", "Does"], lv: "하"},
+    {q: "현재진행형 의문문: ____ he studying now?", a: "Is", c: ["Is", "Are", "Am"], lv: "하"},
+    {q: "표현: '조용히 해라'를 영어로?", a: "Be quiet.", c: ["Be quiet.", "Do quiet.", "Quiet."], lv: "하"},
+    {q: "현재형 부정: Subin ____ like mint chocolate.", a: "doesn't", c: ["doesn't", "don't", "isn't"], lv: "하"},
+    {q: "문장 완성: We ____ middle school students.", a: "are", c: ["are", "is", "am"], lv: "하"},
+    {q: "표현: '최선을 다해라'를 영어로?", a: "Do your best.", c: ["Do your best.", "Doing your best.", "Does your best."], lv: "하"},
+    {q: "현재진행형 부정: I am ____ watching TV.", a: "not", c: ["not", "don't", "no"], lv: "하"},
+    {q: "조동사 부정: They cannot ____ this heavy box.", a: "lift", c: ["lift", "lifts", "lifting"], lv: "하"},
+    {q: "조동사 부정: Minho will ____ go to the party.", a: "not", c: ["not", "don't", "isn't"], lv: "하"},
+    {q: "단어: '지구를 보호하다'에서 '보호하다'에 알맞은 단어는?", a: "protect", c: ["protect", "pollute", "destroy"], lv: "하"},
+    {q: "단어: '규칙'을 뜻하는 올바른 영어 단어는?", a: "rule", c: ["rule", "role", "root"], lv: "하"},
+    {q: "단어: '조언, 팁'을 뜻하는 올바른 영어 단어는?", a: "tip", c: ["tip", "top", "tap"], lv: "하"},
+    {q: "현재형: Minji ____ English every day.", a: "studies", c: ["studies", "studys", "study"], lv: "하"},
+    {q: "현재진행형 규칙: 'swim'의 -ing 형태로 올바른 것은?", a: "swimming", c: ["swimming", "swiming", "swimmiing"], lv: "하"},
+
+    // [중 난이도 - 보기 3개] 25문항
+    {q: "다음 중 어법상 '명령문'의 형태로 올바른 것은?", a: "Open the window.", c: ["Open the window.", "Opens the window.", "Opening the window."], lv: "중"},
+    {q: "다음 중 어법상 '부정명령문'으로 올바른 것은?", a: "Don't touch that.", c: ["Don't touch that.", "Not touch that.", "Doesn't touch that."], lv: "중"},
+    {q: "문장 완성: What ____ you doing right now?", a: "are", c: ["are", "is", "do"], lv: "중"},
+    {q: "대답 완성: Can you help me? - Yes, I ____.", a: "can", c: ["can", "do", "am"], lv: "중"},
+    {q: "대답 완성: Will you come? - No, I ____.", a: "won't", c: ["won't", "will", "don't"], lv: "중"},
+    {q: "현재진행형 의문문 대답: Is she crying? - No, she ____.", a: "isn't", c: ["isn't", "doesn't", "not"], lv: "중"},
+    {q: "문장 완성: Minjun ____ play the guitar, but he plays the piano well.", a: "cannot", c: ["cannot", "can", "is not"], lv: "중"},
+    {q: "문장 완성: The train ____ arrive soon.", a: "will", c: ["will", "is", "does"], lv: "중"},
+    {q: "현재형 의문문: ____ your sister like cats?", a: "Does", c: ["Does", "Do", "Is"], lv: "중"},
+    {q: "현재진행형 규칙: 'write'의 -ing 형태로 올바른 것은?", a: "writing", c: ["writing", "writeing", "writting"], lv: "중"},
+    {q: "현재진행형 규칙: 'die'의 -ing 형태로 올바른 것은?", a: "dying", c: ["dying", "dieing", "deying"], lv: "중"},
+    {q: "문맥상 알맞은 조동사: Look at those dark clouds! It ____ rain soon.", a: "will", c: ["will", "can", "won't"], lv: "중"},
+    {q: "문맥상 알맞은 조동사: He is a smart boy. He ____ solve this puzzle easily.", a: "can", c: ["can", "will not", "is"], lv: "중"},
+    {q: "부정명령문: ____ be afraid of making mistakes.", a: "Don't", c: ["Don't", "Not", "No"], lv: "중"},
+    {q: "명령문: ____ kind to your classmates.", a: "Be", c: ["Be", "Do", "Are"], lv: "중"},
+    {q: "현재진행형 완성: The birds ____ flying in the sky.", a: "are", c: ["are", "is", "am"], lv: "중"},
+    {q: "의문문 완성: What time ____ the bus come?", a: "does", c: ["does", "do", "is"], lv: "중"},
+    {q: "표현: '쓰레기를 버리지 마라'의 올바른 영어 표현은?", a: "Don't throw away trash.", c: ["Don't throw away trash.", "Not throw away trash.", "Throw away no trash."], lv: "중"},
+    {q: "단어: '건강한'을 뜻하는 올바른 영어 단어는?", a: "healthy", c: ["healthy", "health", "heal"], lv: "중"},
+    {q: "단어: '에너지를 절약하다'에서 '절약하다'에 알맞은 단어는?", a: "save", c: ["save", "safe", "spend"], lv: "중"},
+    {q: "단어: '매일매일의, 일상의'를 뜻하는 단어는?", a: "daily", c: ["daily", "diary", "dairy"], lv: "중"},
+    {q: "문장 완성: Sujin and I ____ practicing English together.", a: "are", c: ["are", "is", "am"], lv: "중"},
+    {q: "현재형 문장: Water ____ at 100 degrees Celsius.", a: "boils", c: ["boils", "boil", "boiling"], lv: "중"},
+    {q: "현재진행형 부정: We ____ not taking a break right now.", a: "are", c: ["are", "is", "do"], lv: "중"},
+    {q: "의문문 완성: Where ____ you going for vacation?", a: "are", c: ["are", "do", "will"], lv: "중"},
+
+    // [상 난이도 - 보기 4개 필수] 25문항
+    {q: "다음 중 어법상 가장 '올바른' 문장을 고르세요.", a: "She can speak English very well.", c: ["She can speak English very well.", "She cans speak English very well.", "She can speaks English very well.", "She can speaking English very well."], lv: "상"},
+    {q: "다음 중 어법상 가장 '올바른' 문장을 고르세요.", a: "Don't make a loud noise here.", c: ["Don't make a loud noise here.", "Don't making a loud noise here.", "Not make a loud noise here.", "Doesn't make a loud noise here."], lv: "상"},
+    {q: "다음 중 어법상 '틀린' 문장을 고르세요.", a: "I am wanting a new smartphone now.", c: ["I am wanting a new smartphone now.", "I am having lunch right now.", "She is running in the school yard.", "They are planning a class party."], lv: "상"},
+    {q: "빈칸에 들어갈 말이 순서대로 짝지어진 것을 고르세요.\n- He ____ play soccer tomorrow.\n- She ____ swim 100 meters now.", a: "will, can", c: ["will, can", "can, will", "is, does", "does, is"], lv: "상"},
+    {q: "다음 중 '현재진행형' 문장으로 어법상 올바른 것은?", a: "Jimin is sitting on the bench.", c: ["Jimin is sitting on the bench.", "Jimin is siting on the bench.", "Jimin does sitting on the bench.", "Jimin sits on the bench now."], lv: "상"},
+    {q: "의문문과 대답이 어법상 가장 잘 짝지어진 것을 고르세요.", a: "Are you listening to music? - No, I'm not.", c: ["Are you listening to music? - No, I'm not.", "Is he washing his hands? - Yes, he does.", "Can you ride a unicycle? - Yes, I am.", "Will you help me? - No, I don't."], lv: "상"},
+    {q: "다음 대화의 빈칸에 알맞은 단어를 순서대로 쓰세요.\nA: What ____ you doing?\nB: I ____ making a card for Teacher's Day.", a: "are, am", c: ["are, am", "is, am", "do, am", "are, do"], lv: "상"},
+    {q: "다음 중 의미와 형태가 모두 올바른 부정명령문은?", a: "Never give up hope.", c: ["Never give up hope.", "Don't giving up hope.", "Not give up hope.", "Doesn't give up hope."], lv: "상"},
+    {q: "다음 중 '강한 의지나 미래의 계획'을 나타낼 때 가장 알맞은 문장은?", a: "I will pass the exam this time.", c: ["I will pass the exam this time.", "I can pass the exam this time.", "Pass the exam this time.", "I am pass the exam this time."], lv: "상"},
+    {q: "다음 문장의 빈칸에 알맞은 단어는?\n'You look tired. ____ some water and take a rest.'", a: "Drink", c: ["Drink", "To drink", "Drinking", "Drinks"], lv: "상"},
+    {q: "다음 중 '현재진행형'의 부정문 형식으로 올바른 것은?", a: "The students are not studying science.", c: ["The students are not studying science.", "The students don't studying science.", "The students not studying science.", "The students doesn't studying science."], lv: "상"},
+    {q: "다음 중 현재형 문장에서 3인칭 단수 주어 뒤의 동사 형태가 '틀린' 것은?", a: "The baby crys all night.", c: ["The baby crys all night.", "Tom goes to church on Sundays.", "My mom washes the dishes.", "He mixes the ingredients well."], lv: "상"},
+    {q: "다음 두 문장을 한 문장의 명령문으로 바르게 고친 것은?\n'You must listen to the teacher. You should be quiet.'", a: "Listen to the teacher and be quiet.", c: ["Listen to the teacher and be quiet.", "To listen to the teacher and quiet.", "Listening to the teacher and do quiet.", "Listens to the teacher and is quiet."], lv: "상"},
+    {q: "다음 중 조동사 will의 부정문 단축형이 올바르게 쓰인 문장은?", a: "We won't go to the museum.", c: ["We won't go to the museum.", "We willn't go to the museum.", "We don't will go to the museum.", "We aren't will go to the museum."], lv: "상"},
+    {q: "다음 영영풀이에 해당하는 단어로 가장 적절한 것은?\n'to give food to a person or an animal'", a: "feed", c: ["feed", "eat", "cook", "feel"], lv: "상"},
+    {q: "다음 문장의 빈칸에 공통으로 들어갈 수 있는 단어는?\n- ____ you play chess?\n- Anyone ____ join our club.", a: "Can", c: ["Can", "Will", "Do", "Are"], lv: "상"},
+    {q: "다음 중 어법상 '틀린' 문장을 고르세요.", a: "My friends will going to the amusement park.", c: ["My friends will going to the amusement park.", "Please don't run in the classroom.", "Are you looking for your wallet?", "He doesn't like spicy food."], lv: "상"},
+    {q: "다음 문장의 밑줄 친 부분 중 어법상 '틀린' 곳을 고르세요.\n'Look! The cat (1)is (2)chasing a mouse, but it (3)cannot (4)catches it.'", a: "(4) catches", c: ["(1) is", "(2) chasing", "(3) cannot", "(4) catches"], lv: "상"},
+    {q: "다음 중 대답이 'No, they won't.'가 되기 위한 가장 올바른 의문문은?", a: "Will they go hiking this weekend?", c: ["Will they go hiking this weekend?", "Are they going hiking this weekend?", "Do they go hiking this weekend?", "Can they go hiking this weekend?"], lv: "상"},
+    {q: "다음 중 현재진행형 의문문의 어순으로 올바른 것은?", a: "Be동사 + 주어 + 동사원형-ing ~?", c: ["Be동사 + 주어 + 동사원형-ing ~?", "주어 + Be동사 + 동사원형-ing ~?", "의문사 + 주어 + Be동사-ing ~?", "Do/Does + 주어 + Be동사-ing ~?"], lv: "상"},
+    {q: "명령문과 일반문장 구분: 빈칸에 들어갈 수 없는 것은?\n'____ your name here.'", a: "You", c: ["You", "Write", "Please write", "Don't write"], lv: "상"},
+    {q: "현재진행형으로 바꿀 때 자음동화 규칙이 다르게 적용되는 동사는?", a: "open", c: ["open", "run", "sit", "cut"], lv: "상"},
+    {q: "의문문 변환: 'Jina will sing a song.'을 올바른 의문문으로 고치면?", a: "Will Jina sing a song?", c: ["Will Jina sing a song?", "Is Jina will sing a song?", "Does Jina will sing a song?", "Will Jina sings a song?"], lv: "상"},
+    {q: "의미상 빈칸에 can이 들어갈 수 없는 문장을 고르세요.", a: "It ____ rain tomorrow morning.", c: ["It ____ rain tomorrow morning.", "I ____ speak two languages.", "____ you open this bottle for me?", "You ____ park your car here."], lv: "상"},
+    {q: "현재진행형 규칙: 'lie'의 -ing 형태로 올바른 것은?", a: "lying", c: ["lying", "lieing", "liing", "leving"], lv: "상"}
+];
+
+// 게임 시스템 및 가변적 난이도 변수 설정
+let houses = 0;
+let selectedIdx = -1;
+let wrongCount = 0;
+let garden = Array(16).fill(0);
+const icons = ["", "🌱", "🌿", "🌷", "🌳", "🏡"]; 
+
+// 동적 난이도 제어용 상태 변수
+let currentStudentLevel = "중"; // 최초 시작 난이도: '중'에서 시작
+
+function startGame() { 
+    document.getElementById('intro-overlay').style.display = 'none'; 
+}
+
+function openQuiz() {
+    // 정원 만석 체크 규칙 준수
+    if (garden.filter(v => v === 0).length === 0) { 
+        alert("🚨 정원에 빈 칸이 없어 아이템을 둘 자리가 없습니다! 기존 아이템을 합치거나(merge) 정리를 해주세요."); 
+        return; 
+    }
+    
+    wrongCount = 0; 
+    
+    // 현재 학생 상태 레벨에 맞게 문제 풀(Pool) 필터링
+    let filteredQuestions = quizData.filter(q => q.lv === currentStudentLevel);
+    
+    // 만약 상향 조절되어 '상' 레벨인데 '중/상'을 같이 혼합해 출제하고 싶은 경우에 대한 보정 로직
+    if (currentStudentLevel === "상") {
+        filteredQuestions = quizData.filter(q => q.lv === "중" || q.lv === "상");
+    }
+
+    const q = filteredQuestions[Math.floor(Math.random() * filteredQuestions.length)];
+    
+    // 헤더 상태바에 현재 학생 레벨 실시간 표시
+    document.getElementById('system-status').textContent = `학생 레벨: ${currentStudentLevel}`;
+    
+    // 난이도 태그 UI 세팅
+    const lvlTag = document.getElementById('q-level');
+    lvlTag.textContent = `문제 난이도 [${q.lv}]`;
+    if (q.lv === "상") {
+        lvlTag.style.background = "#ffebee";
+        lvlTag.style.color = "#c62828";
+    } else if (q.lv === "중") {
+        lvlTag.style.background = "#e3f2fd";
+        lvlTag.style.color = "#1565c0";
+    } else {
+        lvlTag.style.background = "#e8f5e9";
+        lvlTag.style.color = "var(--accent)";
+    }
+    
+    document.getElementById('q-text').textContent = q.q;
+    const optBox = document.getElementById('options');
+    optBox.innerHTML = '';
+    
+    const choices = [...q.c].sort(() => Math.random() - 0.5);
+    
+    choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'ans-btn';
+        btn.textContent = choice;
+        btn.onclick = () => {
+            if (choice === q.a) {
+                // 단 한 번만에 맞힌 경우 난이도 상향 조건
+                if (wrongCount === 0) {
+                    if (currentStudentLevel === "하") currentStudentLevel = "중";
+                    else if (currentStudentLevel === "중") currentStudentLevel = "상";
+                }
+                
+                // 확률 규칙 준수: 정답 시 90%로 🌱(1단계), 10%로 🌿(2단계) 스폰. 꽃 직접 지급 금지
+                const rand = Math.random();
+                const spawnLevel = (rand < 0.9) ? 1 : 2; 
+                spawnItem(spawnLevel);
+                document.getElementById('quiz-overlay').style.display = 'none';
+            } else {
+                wrongCount++;
+                // 페널티 규칙: 한 문제를 두 번 틀리는 경우 5초 정지 및 정답 노출 후 새 문제 진행
+                if (wrongCount >= 2) {
+                    currentStudentLevel = "하"; // 두 번 틀려 페널티 유발 시 난이도 즉시 하향
+                    startPenalty(q.a);
+                } else {
+                    alert("❌ 틀렸습니다! 한 번 더 신중하게 기회를 드립니다.");
+                }
+            }
+        };
+        optBox.appendChild(btn);
+    });
+    document.getElementById('quiz-overlay').style.display = 'flex';
+}
+
+function startPenalty(correctAnswer) {
+    const lock = document.getElementById('lock-overlay');
+    const timerText = document.getElementById('lock-timer');
+    
+    document.getElementById('lock-answer').textContent = correctAnswer;
+    lock.style.display = 'flex';
+    document.getElementById('quiz-overlay').style.display = 'none';
+    
+    let count = 5;
+    const interval = setInterval(() => {
+        count--;
+        timerText.textContent = count;
+        if (count <= 0) {
+            clearInterval(interval);
+            lock.style.display = 'none';
+            timerText.textContent = "5";
+            wrongCount = 0;
+            openQuiz(); // 5초 정지 해제 후 새 문제 출제 규칙 이행
+        }
+    }, 1000);
+}
+
+function spawnItem(lv) {
+    const emptySlots = garden.map((v, i) => v === 0 ? i : null).filter(v => v !== null);
+    if (emptySlots.length > 0) {
+        const targetSlot = emptySlots[Math.floor(Math.random() * emptySlots.length)];
+        garden[targetSlot] = lv;
+    }
+    updateGarden();
+}
+
+function handleSlotClick(idx) {
+    if (garden[idx] === 0 || garden[idx] >= 5) { 
+        selectedIdx = -1; 
+        updateGarden(); 
+        return; 
+    }
+    
+    if (selectedIdx === -1) {
+        selectedIdx = idx; 
+        updateGarden();
+        document.getElementById(`slot-${idx}`).classList.add('selected');
+    } else if (selectedIdx === idx) { 
+        selectedIdx = -1; 
+        updateGarden(); 
+    } else {
+        if (garden[selectedIdx] === garden[idx]) {
+            garden[idx] += 1; 
+            garden[selectedIdx] = 0; 
+            
+            // 완공 처리 카운트 (5단계 🏡)
+            if (garden[idx] === 5) { 
+                houses++; 
+                document.getElementById('house-count').textContent = houses; 
+            }
+            
+            selectedIdx = -1; 
+            updateGarden();
+            
+            // 미션 성공 조건: 집 두 채(building two houses) 완공 시 승리 조건 충족
+            setTimeout(() => { 
+                if (houses >= 2) { 
+                    alert("🏆 MISSION COMPLETE!\n축하합니다! 아름다운 집 두 채를 모두 완성했습니다! ✨🏡🏡"); 
+                } 
+            }, 150);
+        } else { 
+            selectedIdx = idx; 
+            updateGarden(); 
+            document.getElementById(`slot-${idx}`).classList.add('selected'); 
+        }
+    }
+}
+
+function updateGarden() {
+    let emptyCount = 0;
+    garden.forEach((v, i) => {
+        const slot = document.getElementById(`slot-${i}`);
+        slot.textContent = icons[v];
+        slot.className = 'slot' + (v > 0 ? ' has-item' : '');
+        if (v === 0) emptyCount++;
+        if (v === 5) slot.style.background = "#fff9c4"; 
+    });
+    
+    const quizBtn = document.getElementById('quiz-btn');
+    if (emptyCount === 0) {
+        quizBtn.style.opacity = "0.6";
+        quizBtn.innerText = "GARDEN FULL (Merge!)";
+    } else {
+        quizBtn.style.opacity = "1";
+        quizBtn.innerText = "GET ITEM (Quiz)";
+    }
+}
+
+updateGarden();
+</script>
+</body>
+</html>
